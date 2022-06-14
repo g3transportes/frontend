@@ -1,0 +1,87 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                </p-toolbar>
+                
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 80px">Cód.</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>RG</th>
+                            <th>Habilitação</th>
+                            <th>Telefone1</th>
+                            <th>Telefone2</th>
+                            <th>Telefone3</th>
+                            <th>Email</th>
+                            <th style="width: 150px">Ações</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th class="ui-fluid form-item">
+                                <input type="text" pInputText [(ngModel)]="filtro.NomeValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th class="ui-fluid form-item" colspan="3">
+                                <input type="text" pInputText [(ngModel)]="filtro.DocumentoValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th class="ui-fluid form-item" colspan="4">
+                                <input type="text" pInputText [(ngModel)]="filtro.DescricaoValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th>
+                                <a class="action-primary" (click)="onFilter_Click()">
+                                    <i class="pi pi-filter"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{ item.Id }}</td>
+                            <td>{{ item.Nome }}</td>
+                            <td>{{ item.Documento1 }}</td>
+                            <td>{{ item.Documento2 }}</td>
+                            <td>{{ item.Documento3 }}</td>
+                            <td>{{ item.Telefone1 }}</td>
+                            <td>{{ item.Telefone2 }}</td>
+                            <td>{{ item.Telefone3 }}</td>
+                            <td>{{ item.Email }}</td>
+                            <td class="text-align-center">
+                                <a class="action-primary" (click)="onEdita_Click(item)">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="10" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>

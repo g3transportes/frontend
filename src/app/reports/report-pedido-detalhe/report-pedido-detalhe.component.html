@@ -1,0 +1,261 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                    </div>
+                </p-toolbar>
+                
+                <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                    <table>
+                        <tr>
+                            <td class="align-left">
+                                <img src="/assets/images/common/logo-menu.png">
+                            </td>
+                            <td class="align-right">
+                                <label class="relatorio-title align-right">Ordem de Serviço</label>
+                                <label class="relatorio-subtitle align-right">OS: {{ pedido.OrdemServico }}</label>
+                            </td>
+                        </tr>
+                    </table>
+                
+                    <div class="padding-10"></div>
+
+                    <ng-container>
+                        <!--RESUMO-->
+                        <table *ngIf="vm.Item != null && vm.Item != undefined">
+                            <tr>
+                                <th colspan="2">Dados do Pedido</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>OS: </strong> {{ vm.Item.OrdemServico }}
+                                </td>
+                                <td style="width: 50%;">
+                                    <strong>Num. Pedido: </strong> {{ vm.Item.NumPedido }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>Data da Coleta: </strong> {{ vm.Item.DataColeta | date : 'dd/MM/yyyy' }}
+                                </td>
+                                <td style="width: 50%;">
+                                    <strong>Data da Entrega: </strong> {{ vm.Item.DataEntrega | date : 'dd/MM/yyyy' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>Cliente: </strong> {{ vm.Item.Cliente.RazaoSocial }}
+                                </td>
+                                <td style="width: 50%;">
+                                    <strong>Caminhão: </strong> {{ vm.Item.Caminhao.Placa }} - {{ vm.Item.Caminhao.Motorista.Nome }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>Remetente: </strong> 
+                                    <span *ngIf="vm.Item.Remetente">{{ vm.Item.Remetente.RazaoSocial }}</span>
+                                </td>
+                                <td style="width: 50%;">
+                                    <strong>Local da Coleta: </strong> {{ vm.Item.LocalColeta }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <strong>Nº de Paletes a Serem Liberados:</strong> 
+                                    {{ vm.Item.Paletes }} paletes
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">
+                                    <strong>CTe: </strong> {{ vm.Item.CTe }}
+                                </td>
+                                <td style="width: 50%;">
+                                    <div>
+                                        <strong>NFe: </strong> {{ vm.Item.NFe }}
+                                    </div>
+                                    <div *ngIf="vm.Item.Boleto">
+                                        <strong>Boleto: </strong> {{ vm.Item.Boleto }}
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <strong>Observações:</strong><br> 
+                                    {{ vm.Item.Observacao }}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="padding-10"></div>
+
+                        <!--DADOS DO CAMINHAO-->
+                        <table *ngIf="caminhao != null && caminhao != undefined">
+                            <tr>
+                                <th colspan="4">Dados do Caminhão</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>Placa CV: </strong> {{ caminhao.Placa.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Placa CR: </strong> {{ caminhao.Placa2.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Placa CR2: </strong> {{ caminhao.Placa3.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Placa CR2: </strong> {{ caminhao.Placa4.toUpperCase() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>Renavam CV: </strong> {{ caminhao.Renavam.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Renavam CR: </strong> {{ caminhao.Renavam2.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Renavam CR2: </strong> {{ caminhao.Renavam3.toUpperCase() }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Renavam CR2: </strong> {{ caminhao.Renavam4.toUpperCase() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Estado: </strong> {{ caminhao.Estado.toUpperCase() }}
+                                </td>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Cidade: </strong> {{ caminhao.Cidade.toUpperCase() }}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="padding-10"></div>
+
+                        <!--DADOS DO MOTORISTA-->
+                        <table *ngIf="motorista != null && motorista != undefined">
+                            <tr>
+                                <th colspan="4">Dados do Motorista</th>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="width: 100%;">
+                                    <strong>Nome: </strong> {{ motorista.Nome }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>CPF: </strong> {{ motorista.Documento1 }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>RG: </strong> {{ motorista.Documento2 }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Telefone: </strong> {{ motorista.Telefone1 }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Email: </strong> {{ motorista.Email }}
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>Categoria: </strong> {{ motorista.Categoria }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Habilitação: </strong> {{ motorista.Documento3 }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Data Habilitação: </strong> {{ motorista.DataHabilitacao | date : 'dd/MM/yyyy' }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Venc. Habilitação: </strong> {{ motorista.DataVencimento | date : 'dd/MM/yyyy' }}
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Estado: </strong> {{ motorista.EndEstado }}
+                                </td>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Cidade: </strong> {{ motorista.EndCidade }}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="padding-10"></div>
+
+                        <!--DADOS DO PROPRIETARIO-->
+                        <table *ngIf="proprietario != null && proprietario != undefined">
+                            <tr>
+                                <th colspan="4">Dados do Proprietário</th>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Nome: </strong> {{ proprietario.Nome }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>CPF / CNPJ: </strong> {{ proprietario.Documento }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>RG / Insc. Est.: </strong> {{ proprietario.Documento2 }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>ANTT / RNTRC: </strong> {{ proprietario.Antt }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Venc. ANTT: </strong> {{ proprietario.AnttData | date : 'dd/MM/yyyy' }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Tipo: </strong> {{ proprietario.Tipo }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>PIS: </strong> {{ proprietario.Pis }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="width: 50%;">
+                                    <strong>Filiação: </strong> {{ proprietario.Filiacao }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Telefone: </strong> {{ proprietario.Telefone1 }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Telefone 2: </strong> {{ proprietario.Telefone2 }}
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="4" style="width: 100%;">
+                                    <strong>Endereço: </strong> {{ proprietario.EndRua }} {{ proprietario.EndNumero }} - {{ proprietario.EndComplemento }} 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>Bairro: </strong> {{ proprietario.EndBairro }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Cidade: </strong> {{ proprietario.EndCidade }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Estado: </strong> {{ proprietario.EndEstado }}
+                                </td>
+                                <td style="width: 25%;">
+                                    <strong>Cep: </strong> {{ proprietario.EndCep }}
+                                </td>
+                            </tr>
+                        </table>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

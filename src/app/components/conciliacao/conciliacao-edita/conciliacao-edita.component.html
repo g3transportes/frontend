@@ -1,0 +1,35 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Conciliação">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Data</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.Data" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+
+            <div class="p-col-12 p-md-5 p-lg-5 ui-fluid form-item">
+                <label>Conta</label>
+                <p-dropdown appendTo="body" [options]="contas" [(ngModel)]="vm.IdConta" [filter]="true"></p-dropdown>
+            </div>
+
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Saldo</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.Saldo"> 
+            </div>
+
+            <div class="p-col-12 p-md-12 p-lg-12 ui-fluid form-item" *ngIf="this.vm.Anexo">
+                <label>Anexo</label>
+                <a [href]="this.vm.Anexo" target="_blank">
+                    Clique para abrir o anexo
+                </a>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Anexar Documento" class="float-left ui-button-secondary" (click)="onAdicionaAnexo_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

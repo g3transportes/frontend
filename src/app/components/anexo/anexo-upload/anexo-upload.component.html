@@ -1,0 +1,12 @@
+<p-fileUpload name="files[]" 
+              [url]="url" 
+              multiple="multiple"  
+              maxFileSize="20000000" 
+              chooseLabel="Selecionar"
+              uploadLabel="Enviar"
+              cancelLabel="Cancelar"
+              (onUpload)="onUpload($event)">
+    <ng-template pTemplate="content">
+        <div class="upload-dragdrop"></div>
+    </ng-template>
+</p-fileUpload>

@@ -1,0 +1,32 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Usuário">
+        <div class="p-grid">
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Nome</label>
+                <input type="text" pInputText [(ngModel)]="vm.Nome"> 
+            </div>
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Email</label>
+                <input type="text" pInputText [(ngModel)]="vm.Email"> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item" *ngIf="vm.Id == 0">
+                <label>Senha</label>
+                <input type="password" pPassword [(ngModel)]="vm.Senha" [feedback]="true"> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item" *ngIf="vm.Id == 0">
+                <label>Confirmação da Senha</label>
+                <input type="password" pPassword [(ngModel)]="confirmaSenha" [feedback]="true"> 
+            </div>
+            <div class="p-col-12" *ngIf="vm.Id != 0">
+                <p-checkbox label="Registro ativo" [(ngModel)]="vm.Ativo" binary="true"></p-checkbox>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

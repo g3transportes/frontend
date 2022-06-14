@@ -1,0 +1,14 @@
+.header-container
+{
+    background-color: #efefef;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-bottom: solid 3px #56763f;
+}
+
+.content-container
+{
+    padding: 1em;
+}

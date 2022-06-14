@@ -1,0 +1,155 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                        <div class="ui-toolbar-group-right" style="margin-right:10px;">
+						<button pButton type="button" label="Exportar Excel" icon="pi pi-download pi" (click)="onExportXls_Click()"></button>
+					</div>
+                </p-toolbar>
+
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 70px">Tipo</th>
+                            <th style="width: 180px">Pedido</th>
+                            <th style="width: 90px">Emissão</th>
+                            <th style="width: 90px">Vencimento</th>
+                            <th style="width: 90px">Baixa</th>
+                            <th>Cliente</th>
+                            <th>Caminhao</th>
+                            <th>Forma Pgto</th>
+                            <th style="width: 100px">Valor</th>
+                            <th style="width: 100px">Vlr Baixa (Saldo)</th>
+                            <th style="width: 90px">Baixado</th>
+                            <th style="width: 110px">Ações</th>
+                        </tr>
+                        <tr>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="tipos" [(ngModel)]="filtro.TipoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="pedidos" [(ngModel)]="filtro.PedidoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroDataEmissao" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroDataVencimento" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroDataBaixa" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="filtro.ClienteValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="caminhoes" [(ngModel)]="filtro.CaminhaoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="filtro.FormaPagamentoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <input type="number" step="0.01" pInputText [(ngModel)]="filtro.ValorLiquidoValue" (keyup.enter)="onFilter_Click()">
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <input type="number" step="0.01" pInputText [(ngModel)]="filtro.ValorBaixadoValue" (keyup.enter)="onFilter_Click()">
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="baixado" [(ngModel)]="filtro.BaixadoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th>
+                                <a class="action-primary" (click)="onFilter_Click()">
+                                    <i class="pi pi-filter"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td class="text-align-center">
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="item.Pedido != null">
+                                    <span *ngIf="item.Pedido.OrdemServico" class="content-block">
+                                        <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                            {{ item.Pedido.OrdemServico }}
+                                        </a>
+                                    </span>
+                                    <span *ngIf="item.Pedido.NumPedido" class="content-block">Ped: {{ item.Pedido.NumPedido }}</span>
+                                    <span *ngIf="item.Pedido.CTe" class="content-block">CTe: {{ item.Pedido.CTe }}</span>
+                                    <span *ngIf="item.Pedido.NFe" class="content-block">NFe: {{ item.Pedido.NFe }}</span>
+                                    <span *ngIf="item.Pedido.Boleto" class="content-block">Boleto: {{ item.Pedido.Boleto }}</span>
+                                </ng-container>
+                                <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                            </td>
+                            <td>{{ item.DataEmissao | date : 'dd/MM/yyyy' }}</td>
+                            <td>{{ item.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                            <td>{{ item.DataBaixa | date : 'dd/MM/yyyy' }}</td>
+                            <td>
+                                <ng-container *ngIf="item.Cliente != null">{{ item.Cliente.RazaoSocial }}</ng-container>
+                                <ng-container *ngIf="item.Cliente == null">{{ item.Favorecido }}</ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="item.Caminhao != null">{{ item.Caminhao.Placa }} - {{ item.Caminhao.Motorista.Nome }}</ng-container>
+                                <ng-container *ngIf="item.Caminhao == null">Não Informado</ng-container>
+                            </td>
+                            <td>{{ item.FormaPagamento.Nome }}</td>
+                            <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                            <td class="text-align-center">
+                                {{ item.ValorBaixado | currency:'BRL' }}
+                                <ng-container *ngIf="item.ValorSaldo != 0">
+                                    <span class="text-blue content-block">({{ item.ValorSaldo | currency:'BRL' }})</span>
+                                </ng-container>
+
+                            </td>
+
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Baixado" binary="true" disabled="true"></p-checkbox>
+                            </td>
+                            <td class="text-align-right">
+                                <a class="action-primary" (click)="onBaixa_Click(item)" *ngIf="item.Baixado == false">
+                                    <i class="pi pi-check-circle"></i>
+                                </a>
+                                <a class="action-primary" (click)="onEstorna_Click(item)" *ngIf="item.Baixado == true">
+                                    <i class="pi pi-undo"></i>
+                                </a>
+                                <a class="action-primary" (click)="onEdita_Click(item)">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="13" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>

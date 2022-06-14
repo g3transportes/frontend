@@ -1,0 +1,376 @@
+/* You can add global styles to this file, and also import other style files */
+body
+{
+    background-color: #d9d9d9;
+    font-family: "Open Sans", "Helvetica Neue", sans-serif;
+    font-size: 12px;
+}
+
+body .ui-button 
+{
+    font-size: 12px !important;
+}
+
+body .ui-widget {
+    font-size: 12px !important;
+}
+
+body .ui-inputtext
+{
+    font-size: 12px !important;
+}
+
+a
+{
+    cursor: pointer;
+}
+
+hr
+{
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 0;
+    border-top-color: currentcolor;
+    border-top-style: none;
+    border-top-width: 0px;
+    border-top: 1px solid rgba(0,0,0,.1);
+}
+
+[data-negative] 
+{
+    color: red;
+}
+
+.text-bold
+{
+    font-weight: bold;
+}
+
+.text-align-center
+{
+    text-align: center;
+}
+
+.text-align-right
+{
+    text-align: right;
+}
+
+.text-align-left
+{
+    text-align: left;
+}
+
+.text-red
+{
+    color: red;
+}
+
+.text-blue
+{
+    color: blue;
+}
+
+.text-green
+{
+    color: green;
+}
+
+.text-uppercase
+{
+    text-transform: uppercase;
+}
+
+.padding-1
+{
+    padding: 1em;
+}
+
+.padding-2
+{
+    padding: 2em;
+}
+
+.padding-top-1
+{
+    padding-top: 1em;
+}
+
+.padding-top-2
+{
+    padding-top: 2em;
+}
+
+.padding-top-3
+{
+    padding-top: 3em;
+}
+
+.padding-top-4
+{
+    padding-top: 4em;
+}
+
+.float-left
+{
+    float: left;
+}
+
+.float-right
+{
+    float: right;
+}
+
+.table-paginator
+{
+    border-top: none !important;
+}
+
+.toolbar-space-right
+{
+    margin-right: 1em;
+}
+.toolbar-space-left
+{
+    margin-left: 1em;
+}
+
+/* HACKS DO PRIME NG */
+.ui-menubar
+{
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.ui-menubar .ui-menuitem-active > .ui-submenu > .ui-submenu-list
+{
+    white-space: nowrap !important;
+    text-align: left !important;
+}
+
+.ui-progressbar {
+    height: 5px !important;
+    
+}
+
+.ui-tooltip 
+{
+    z-index: 9999 !important;
+}
+
+.ui-toolbar
+{
+    border-bottom: none !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.ui-overflow-hidden
+{
+    overflow: auto !important;
+}
+
+.ui-table .ui-table-tbody > tr > td 
+{
+    word-wrap: anywhere;
+}
+
+.ui-dialog 
+{
+    position: fixed !important;
+    max-height: 97% !important;
+    z-index: 9900 !important;
+    overflow: auto;
+}
+
+
+.swal2-container {
+    z-index: 9999 !important;
+}
+
+.ui-toast 
+{
+    z-index: 9999 !important;
+}
+
+.ui-widget-overlay 
+.ui-dialog-mask
+{
+    z-index: 10 !important;
+}
+
+.ui-fluid p-dropdown {
+    width: 100%;
+}
+
+.ui-button-green
+{
+    margin: 0;
+    color: #ffffff;
+    background-color: #56763f !important;
+    border: 1px solid #56763f !important;
+    font-size: 14px; 
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+    .ui-button-green:hover
+    {
+        background-color: #41592f !important;
+    }
+
+.ui-button-grey
+{
+    margin: 0;
+    color: #414141;
+    background-color: #959595 !important;
+    border: 1px solid #959595 !important;
+    font-size: 14px; 
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+    .ui-button-grey:hover
+    {
+        background-color: #7b7b7b !important;
+    }
+
+.ui-dropdown .ui-dropdown-panel {
+    min-width: 100%;
+    width: max-content;
+}
+
+.ui-menu 
+{
+    width: max-content;
+}
+
+.ui-calendar .ui-datepicker {
+    min-width: 300px;
+    z-index: 99999 !important;
+}
+
+.ui-datepicker 
+{
+    z-index: 99999 !important;
+}
+
+.ui-sidebar 
+{
+    overflow-x: scroll;
+}
+
+.ui-dropdown-panel 
+{
+    z-index: 99999 !important;
+}
+
+.ui-multiselect .ui-multiselect-label 
+{
+    max-height: 25px;
+}
+
+
+
+.login-background
+{
+    background-color: #f1f1f1;
+    /*
+    background-image: url('https://source.unsplash.com/random/1900x960/?delivery-truck');
+    background-image: url('https://source.unsplash.com/random/1900x960/?financial');
+    */
+    background-image: url('https://source.unsplash.com/random/1900x960/?delivery-truck');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.content-outlet
+{
+    margin: 0;
+    padding: 0.5em;
+    /*padding-top: 0em;*/
+
+    background-color: white;
+    border: 1px solid #c8c8c8;
+    border-radius: 3px;
+}
+
+.loading-container
+{
+    padding-bottom: 0.5em;
+    height: 5px;
+}
+
+.action-primary
+{
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    cursor: pointer;
+    text-decoration: none;
+    color: #575757;
+    font-size: 1.25em;
+}
+    .action-primary:hover
+    {
+        text-decoration: none;
+        color: #333333;
+    }
+
+.action-danger
+{
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    cursor: pointer;
+    text-decoration: none;
+    color: #ff0000;
+    font-size: 1.25em;
+}
+    .action-danger:hover
+    {
+        text-decoration: none;
+        color: #b20000;
+    }
+
+.form-item
+{
+    padding: 0.5em;
+}
+
+    .form-item label
+    {
+        display: block;
+        font-weight: bold;
+        
+    }
+
+.form-footer
+{
+    background-color: #f4f4f4;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 1.25em;
+    padding-right: 1.25em;
+    border-top: 1px solid #c8c8c8;
+    margin-top: 1em;
+    margin-left: -1em;
+    margin-right: -1em;
+    margin-bottom: -0.6em;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+    .form-footer:after
+    {
+        clear: both;
+        content: "";
+        display: table;
+    }
+
+.content-inline-block
+{
+    display: inline-block;
+}
+
+.content-block
+{
+    display: block;
+}

@@ -1,0 +1,100 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                </p-toolbar>
+                
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 80px">Cód.</th>
+                            <th style="width: 150px">Placa</th>
+                            <th style="width: 150px">Renavam</th>
+                            <th style="width: 150px">Cidade</th>
+                            <th style="width: 150px">Capacidade</th>
+                            <th>Motorista</th>
+                            <th>Proprietário</th>
+                            <th style="width: 80px">Ativo</th>
+                            <th style="width: 150px">Ações</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th class="ui-fluid form-item" colspan="2">
+                                <input type="text" class="text-uppercase" pInputText [(ngModel)]="filtro.PlacaValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <input type="text" pInputText [(ngModel)]="filtro.CidadeValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <input type="number" pInputText [(ngModel)]="filtro.CapacidadeValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="motoristas" [(ngModel)]="filtro.MotoristaValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="proprietarios" [(ngModel)]="filtro.ProprietarioValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th></th>
+                            <th>
+                                <a class="action-primary" (click)="onFilter_Click()">
+                                    <i class="pi pi-filter"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{ item.Id }}</td>
+                            <td class="text-uppercase">{{ item.Placa }}</td>
+                            <td class="text-uppercase">{{ item.Renavam }}</td>
+                            <td class="text-uppercase">{{ item.Cidade }} / {{ item.Estado }}</td>
+                            <td>{{ item.Capacidade }}</td>
+                            <td>
+                                <ng-container *ngIf="item.Motorista != null">{{ item.Motorista.Nome }}</ng-container>
+                                <ng-container *ngIf="item.Motorista == null">Não Informado</ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="item.Proprietario != null">{{ item.Proprietario.Nome }}</ng-container>
+                                <ng-container *ngIf="item.Proprietario == null">Não Informado</ng-container>
+                            </td>
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Ativo" binary="true" disabled="true"></p-checkbox>
+                            </td>
+                            <td class="text-align-center">
+                                <a class="action-primary" (click)="onEdita_Click(item)">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>

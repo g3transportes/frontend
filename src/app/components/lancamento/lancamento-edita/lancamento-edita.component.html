@@ -1,0 +1,241 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Lançamento">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Tipo de Lançamento</label>
+                <p-dropdown appendTo="body" [options]="tipos" [(ngModel)]="vm.Tipo" (onChange)="onTipo_Change()"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Ordem de Serviço</label>
+                <input type="text" *ngIf="vm.Pedido != null" pInputText [(ngModel)]="vm.Pedido.OrdemServico" disabled>
+                <label *ngIf="vm.Pedido == null">Não Informado</label>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Cliente</label>
+                <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="vm.IdCliente" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Caminhão</label>
+                <p-dropdown appendTo="body" [options]="caminhoes" [(ngModel)]="vm.IdCaminhao" [filter]="true"></p-dropdown>
+            </div>
+
+
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Conta Gerencial</label>
+                <p-dropdown appendTo="body" [options]="centrosCusto" [(ngModel)]="vm.IdCentroCusto" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Tipo de Documento</label>
+                <p-dropdown appendTo="body" [options]="tiposDocumento" [(ngModel)]="vm.IdTipoDocumento" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Banco / Caixa</label>
+                <p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="vm.IdContaBancaria" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Forma de Pagamento</label>
+                <p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="vm.IdFormaPagamento" [filter]="true"></p-dropdown>
+            </div>
+
+            <div class="p-col-12 p-md-12 p-lg-12 ui-fluid form-item">
+                <label>Favorecido</label>
+                <input type="text" pInputText [(ngModel)]="vm.Favorecido"> 
+            </div>
+
+            
+            <div class="p-col-12 form-item">
+                <hr>
+            </div>
+
+
+
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Data de Emissão</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.DataEmissao" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Data de Vencimento</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.DataVencimento" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Data da Baixa</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.DataBaixa" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" [disabled]="!vm.Baixado"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Bruto</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorBruto" (ngModelChange)="onValor_Change()"> 
+            </div>
+
+
+
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Desconto</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorDesconto" (ngModelChange)="onValor_Change()"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Acréscimo</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorAcrescimo" (ngModelChange)="onValor_Change()"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Liquido</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorLiquido" disabled> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Baixado</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorBaixado" [disabled]="!vm.Baixado"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Valor Saldo</label>
+                <input type="text" dinheiroMask [(ngModel)]="vm.ValorSaldo" disabled> 
+            </div>
+            
+
+            <div class="p-col-12 form-item">
+                <hr>
+            </div>
+            
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Observações</label>
+                <textarea [rows]="3" pInputTextarea [(ngModel)]="vm.Observacao"></textarea> 
+            </div>
+
+            <div class="p-col-12">
+                <p-checkbox class="padding-1" label="Lançamento baixado" [(ngModel)]="vm.Baixado" binary="true" disabled></p-checkbox>
+                <p-checkbox class="padding-1" label="Lançamento Autorizado" [(ngModel)]="vm.Autorizado" binary="true" disabled></p-checkbox>
+                <span *ngIf="vm.DataAutorizacao">{{ vm.DataAutorizacao | date: 'dd/MM/yyyy' }}</span>
+                <span *ngIf="vm.UsuarioAutorizacao"> - ({{ vm.UsuarioAutorizacao }})</span>
+            </div>
+        </div>
+    </p-tabPanel>
+
+    <p-tabPanel header="Dados Bancários">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Banco</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoNome"> 
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Agência</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoAgencia"> 
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Operação</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoOperacao"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Conta</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoConta"> 
+            </div>
+            <div class="p-col-12 p-md-8 p-lg-8 ui-fluid form-item">
+                <label>Titular</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoTitular"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Documento</label>
+                <input type="text" pInputText [(ngModel)]="vm.BancoDocumento" cpfCnpjMask> 
+            </div>
+        </div>
+    </p-tabPanel>
+
+    <p-tabPanel header="Anexos" *ngIf="vm.Id != 0">
+        <p-toolbar>
+            <div class="ui-toolbar-group-right">
+                <button pButton type="button" icon="pi pi-upload" iconPos="left" label="Adicionar Arquivo" (click)="onAdicionaAnexo_Click()"></button>
+            </div>
+        </p-toolbar>
+        
+        <p-table [value]="vm.Anexos">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Arquivo</th>
+                    <th style="width: 100px">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-anexo>
+                <tr>
+                    <td>
+                        <a [href]="anexo.Anexo.Arquivo" target="_blank">
+                            {{ anexo.Anexo.Nome }}
+                        </a>
+                    </td>
+                    <td class="text-align-center">
+                        <a class="action-danger" (click)="onDeletaAnexo_Click(anexo)">
+                            <i class="pi pi-times"></i>
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="2" class="text-align-center">
+                        Nenhum registro encontrado
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-tabPanel>
+
+    <p-tabPanel header="Baixas" *ngIf="vm.Id != 0">
+        <p-toolbar *ngIf="vm.Baixado == false">
+            <div class="ui-toolbar-group-right">
+                <button pButton type="button" icon="pi pi-upload" iconPos="left" label="Adicionar Baixa" (click)="onAdicionaBaixa_Click()"></button>
+            </div>
+        </p-toolbar>
+        
+        <p-table [value]="vm.Baixas">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px">Data</th>
+                    <th>Banco / Caixa</th>
+                    <th>Forma de Pagamento</th>
+                    <th style="width: 100px">Valor</th>
+                    <th>Observações</th>
+                    <th style="width: 100px">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-baixa>
+                <tr>
+                    <td>{{ baixa.Data | date : 'dd/MM/yyyy' }}</td>
+                    <td>
+                        <ng-container *ngIf="baixa.ContaBancaria != null">{{ baixa.ContaBancaria.Nome }}</ng-container>
+                        <ng-container *ngIf="baixa.ContaBancaria == null">Não Informado</ng-container>
+                    </td>
+                    <td>
+                        <ng-container *ngIf="baixa.FormaPagamento != null">{{ baixa.FormaPagamento.Nome }}</ng-container>
+                        <ng-container *ngIf="baixa.FormaPagamento == null">Não Informado</ng-container>
+                    </td>
+                    <td>{{ baixa.Valor | currency:'BRL' }}</td>
+                    <td>{{ baixa.Observacao }}</td>
+                    <td class="text-align-center">
+                        <a class="action-primary" (click)="onEditaBaixa_Click(baixa)">
+                            <i class="pi pi-pencil"></i>
+                        </a>
+                        <a class="action-danger" (click)="onDeletaBaixa_Click(baixa)">
+                            <i class="pi pi-times"></i>
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-align-center">
+                        Nenhum registro encontrado
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Cliente" class="float-left ui-button-secondary" (click)="onAdicionaCliente_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Caminhão" class="float-left ui-button-secondary" (click)="onAdicionaCaminhao_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Centro Custo" class="float-left ui-button-secondary" (click)="onAdicionaCentroCusto_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Tipo Documento" class="float-left ui-button-secondary" (click)="onAdicionaTipoDocumento_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Conta / Caixa" class="float-left ui-button-secondary" (click)="onAdicionaContaBancaria_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Forma Pagamento" class="float-left ui-button-secondary" (click)="onAdicionaFormaPagamento_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

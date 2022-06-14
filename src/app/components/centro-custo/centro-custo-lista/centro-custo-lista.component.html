@@ -1,0 +1,75 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                </p-toolbar>
+
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 80px">Cód.</th>
+                            <th style="width: 70px">Tipo</th>
+                            <th style="width: 100px">Referência</th>
+                            <th>Nome</th>
+							<th style="width: 80px">Padrão</th>
+							<th style="width: 100px">Operacional</th>
+                            <th style="width: 80px">Ativo</th>
+                            <th style="width: 150px">Ações</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{ item.Id }}</td>
+                            <td class="text-align-center">
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                            </td>
+                            <td>{{ item.Referencia }}</td>
+                            <td>{{ item.Nome }}</td>
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Padrao" binary="true" disabled="true"></p-checkbox>
+                            </td>
+							<td class="text-align-center">
+								<p-checkbox [(ngModel)]="item.UltimoNivel" binary="true" disabled="true"></p-checkbox>
+							</td>
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Ativo" binary="true" disabled="true"></p-checkbox>
+                            </td>
+                            <td class="text-align-center">
+                                <a class="action-primary" (click)="onEdita_Click(item)">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="8" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>

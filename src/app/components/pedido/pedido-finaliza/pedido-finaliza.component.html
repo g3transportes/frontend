@@ -1,0 +1,100 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+<p-tabView *ngIf="vm.Pedido != null">
+    <p-tabPanel header="Coleta de Pedido">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Ordem de Serviço</label>
+                <input type="text" pInputText [(ngModel)]="vm.Pedido.OrdemServico" disabled> 
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Coleta</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.Pedido.DataColeta" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Remetente</label>
+                <p-dropdown appendTo="body" [options]="remetentes" [(ngModel)]="vm.Pedido.IdRemetente" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Local da Coleta</label>
+                <input type="text" pInputText [(ngModel)]="vm.Pedido.LocalColeta"> 
+            </div>
+            <div class="p-col-12 p-md-1 p-lg-1 ui-fluid form-item">
+                <label>Paletes</label>
+                <input type="number" pInputText [(ngModel)]="vm.Pedido.Paletes"> 
+            </div>
+
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>CTe</label>
+                <input type="text" pInputText [(ngModel)]="vm.Pedido.CTe"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>NFe</label>
+                <input type="text" pInputText [(ngModel)]="vm.Pedido.NFe"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Boleto</label>
+                <input type="text" pInputText [(ngModel)]="vm.Pedido.Boleto"> 
+            </div>
+            
+            <ng-container *ngFor="let lanc of vm.Lancamentos">
+                <div class="p-col-12 form-item">
+                    <hr>
+                </div>
+                
+                <div class="p-col-12 form-item">
+                    <label *ngIf="lanc.Tipo == 'C'">Lançamento a Receber</label>
+                    <label *ngIf="lanc.Tipo == 'D'">Lançamento a Pagar</label>
+                </div>
+
+                <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                    <label>Emissão</label>
+                    <p-calendar appendTo="body" [(ngModel)]="lanc.DataEmissao" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+                </div>
+
+                <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                    <label>Vencimento</label>
+                    <p-calendar appendTo="body" [(ngModel)]="lanc.DataVencimento" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+                </div>
+
+                <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                    <label>Forma de Pagamento</label>
+                    <p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="lanc.IdFormaPagamento" [filter]="true"></p-dropdown>
+                </div>
+
+                <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                    <label>Banco / Caixa</label>
+                    <p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="lanc.IdContaBancaria" [filter]="true"></p-dropdown>
+                </div>
+
+                <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                    <label>Valor</label>
+                    <input type="text" dinheiroMask [(ngModel)]="lanc.ValorLiquido"> 
+                </div>
+
+                <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                    <label>Conta Gerencial</label>
+                    <p-dropdown appendTo="body" [options]="pegaCentroCusto(lanc)" [(ngModel)]="lanc.IdCentroCusto" [filter]="true"></p-dropdown>
+                </div>
+
+                <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                    <label>Favorecido</label>
+                    <input type="text" pInputText [(ngModel)]="lanc.Favorecido"> 
+                </div>
+
+                
+
+                <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                    <label>Observações</label>
+                    <input type="text" pInputText [(ngModel)]="lanc.Observacao"> 
+                </div>
+            </ng-container>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Movimenta Estoque" class="float-left ui-button-secondary" (click)="onAdicionaEstoque_Click()" [disabled]="loading.Status"></button>
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Finalizar Pedido" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

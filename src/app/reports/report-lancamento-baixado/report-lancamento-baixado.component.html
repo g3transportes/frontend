@@ -1,0 +1,285 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-3 p-lg-3">
+                        <p-panel header="Parametros">
+                            <div class="p-grid">
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Emissão</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.EmissaoMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.EmissaoMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Baixa</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Tipo de Lancamento</label>
+                                    <p-dropdown appendTo="body" [options]="tipos" [(ngModel)]="filtro.TipoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Cliente</label>
+                                    <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="filtro.ClienteValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Caminhão</label>
+                                    <p-dropdown appendTo="body" [options]="caminhoes" [(ngModel)]="filtro.CaminhaoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Proprietário</label>
+                                    <p-dropdown appendTo="body" [options]="proprietarios" [(ngModel)]="filtro.ProprietarioValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Forma de Pagamento</label>
+                                    <p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="filtro.FormaPagamentoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Banco / Conta</label>
+                                    <p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="filtro.ContaBancariaValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Conta Gerencial</label>
+                                    <p-dropdown appendTo="body" [options]="centrosCusto" [(ngModel)]="filtro.CentroCustoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Tipo de Documento</label>
+                                    <p-dropdown appendTo="body" [options]="tiposDocumento" [(ngModel)]="filtro.TipoDocumentoValue" [filter]="true"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <p-footer>
+                                <button pButton type="button" icon="pi pi-cog" iconPos="left" label="Gera Relatório" (click)="onGerar_Click()"></button>
+                            </p-footer>
+                        </p-panel>
+                    </div>
+
+                    <div class="p-col-12 p-md-9 p-lg-9">
+                        <p-toolbar>
+                            <div class="ui-toolbar-group-right">
+                                <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                            </div>
+							<div class="ui-toolbar-group-right"  style="margin-right:10px;">
+                                <button pButton type="button" label="Exportar Relatório" icon="pi pi-print" (click)="onExportXls_Click()" ></button>
+                            </div>
+                        </p-toolbar>
+
+                        <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                            <table>
+                                <tr>
+                                    <td class="align-left">
+                                        <img src="/assets/images/common/logo-menu.png">
+                                    </td>
+                                    <td class="align-right">
+                                        <label class="relatorio-title align-right">Relatório de Contas Pagas e Recebidas</label>
+                                        <label class="relatorio-subtitle align-right">
+                                            Periodo: {{ filtro.DataMinValue | date : 'dd/MM/yyyy' }} - {{ filtro.DataMaxValue | date : 'dd/MM/yyyy' }}
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="relatorio-separator"></div>
+
+                            <table>
+                                <tr>
+                                    <th>Total Pago</th>
+                                    <th>Total Recebido</th>
+                                    <th>Saldo</th>
+                                </tr>
+                                <tr>
+                                    <td class="align-center">{{ pegaTotal('D') | currency:'BRL' }}</td>
+                                    <td class="align-center">{{ pegaTotal('C') | currency:'BRL' }}</td>
+                                    <td class="align-center">{{ pegaSaldo() | currency:'BRL' }}</td>
+                                </tr>
+                            </table>
+
+                            <table *ngIf="verificaTipo('D')">
+                                <tr>
+                                    <th colspan="7" class="align-center">Contas Pagas</th>
+                                </tr>
+								<tr>
+									<th style="width: 50px;">Tipo</th>
+									<th style="width: 120px;">Datas</th>
+									<th style="min-width: 150px">Pedido</th>
+									<th>Cliente/Caminhao</th>
+									<th>Pagamento</th>
+									<th>Valor</th>
+									<th style="width: 60px;"></th>
+								</tr>
+                                <ng-container *ngFor="let item of filtraLista('D')">
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <label class="message-blue padding-info" *ngIf="item.Lancamento.Tipo == 'C'">{{ item.Lancamento.Tipo }}</label>
+                                            <label class="message-red padding-info" *ngIf="item.Lancamento.Tipo == 'D'">{{ item.Lancamento.Tipo }}</label>
+                                        </td>
+										<td class="align-left">
+											<div *ngIf="item.Lancamento.DataVencimento">
+												<strong>Venc.:</strong> {{ item.Lancamento.DataVencimento | date : 'dd/MM/yyyy' }}
+											</div>
+											<div *ngIf="item.Data">
+												<strong>Baixa:</strong> {{ item.Data | date : 'dd/MM/yyyy' }}
+											</div>
+										</td>
+										<td>
+											<ng-container *ngIf="item.Lancamento.Pedido">
+												<div *ngIf="item.Lancamento.Pedido.OrdemServico">
+													<strong>OS:</strong> {{ item.Lancamento.Pedido.OrdemServico }}
+												</div>
+												<div *ngIf="item.Lancamento.Pedido.CTe">
+													<strong>CTe:</strong> {{ item.Lancamento.Pedido.CTe }}
+												</div>
+												<div *ngIf="item.Lancamento.Pedido.Boleto">
+													<strong>Boleto:</strong> {{ item.Lancamento.Pedido.Boleto }}
+												</div>
+											</ng-container>
+										</td>
+										<td>
+											<div *ngIf="item.Lancamento.Cliente != null">
+												<strong>Cliente:</strong> {{ item.Lancamento.Cliente.RazaoSocial }}
+											</div>
+											<div *ngIf="item.Lancamento.Cliente == null">
+												<strong>Favore.:</strong> {{ item.Lancamento.Favorecido }}
+											</div>
+											<div *ngIf="item.Lancamento.Caminhao">
+												<strong>Caminhão:</strong> {{ item.Lancamento.Caminhao.Placa }}-{{ item.Lancamento.Caminhao.Motorista.Nome }}
+											</div>
+										</td>
+										<td>
+											<div *ngIf="item.FormaPagamento">
+												<strong>Forma Pgto:</strong> {{ item.FormaPagamento.Nome }}
+											</div>
+											<div *ngIf="item.ContaBancaria">
+												<strong>Conta:</strong> {{ item.ContaBancaria.Nome }}
+											</div>
+										</td>
+										<td>{{ item.Valor | currency:'BRL' }}</td>
+
+                                        <td class="align-center">
+                                            <a class="action-primary" (click)="onEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="relatorio-item-border">
+                                        <td colspan="7">
+                                            <label class="text-bold" *ngIf="item.Observacao">Observações</label>
+                                            <div>
+                                                {{ item.Observacao }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                                <tr>
+                                    <td colspan="7" class="align-right text-bold">
+                                        Total Pago: {{ pegaTotal('D') | currency:'BRL' }}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table *ngIf="verificaTipo('C')">
+                                <tr>
+                                    <th colspan="9" class="align-center">Contas Recebidas</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 50px;">Tipo</th>
+                                    <th style="width: 100px;">Vencimento</th>
+                                    <th style="width: 100px;">Baixa</th>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Caminhão</th>
+                                    <th>Forma Pgto</th>
+                                    <th>Valor</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                                <ng-container *ngFor="let item of filtraLista('C')">
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <label class="message-blue padding-info" *ngIf="item.Lancamento.Tipo == 'C'">{{ item.Lancamento.Tipo }}</label>
+                                            <label class="message-red padding-info" *ngIf="item.Lancamento.Tipo == 'D'">{{ item.Lancamento.Tipo }}</label>
+                                        </td>
+                                        <td class="align-left">{{ item.Lancamento.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td class="align-left">{{ item.Data | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <ng-container *ngIf="item.Lancamento.Pedido != null">{{ item.Lancamento.Pedido.OrdemServico }}</ng-container>
+                                            <ng-container *ngIf="item.Lancamento.Pedido == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Lancamento.Cliente != null">{{ item.Lancamento.Cliente.RazaoSocial }}</ng-container>
+                                            <ng-container *ngIf="item.Lancamento.Cliente == null">{{ item.Lancamento.Favorecido }}</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Lancamento.Caminhao != null">{{ item.Lancamento.Caminhao.Placa }} - {{ item.Lancamento.Caminhao.Motorista.Nome }}</ng-container>
+                                            <ng-container *ngIf="item.Lancamento.Caminhao == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>{{ item.Lancamento.FormaPagamento.Nome }}</td>
+                                        <td>{{ item.Valor | currency:'BRL' }}</td>
+                                        <td class="align-center">
+                                            <a class="action-primary" (click)="onEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr class="relatorio-item-border">
+                                        <td colspan="9">
+                                            <label class="text-bold" *ngIf="item.Observacao">Observações</label>
+                                            <div>
+                                                {{ item.Observacao }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                                <tr>
+                                    <td colspan="9" class="align-right text-bold">
+                                        Total Recebido: {{ pegaTotal('C') | currency:'BRL' }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Lançamento">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Data da Baixa</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.Data" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Valor da Baixa</label>
+                <input type="text" class="ui-inputtext ui-corner-all ui-state-default ui-widget" dinheiroMask [(ngModel)]="vm.Valor"> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Banco / Caixa</label>
+                <p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="vm.IdContaBancaria" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Forma de Pagamento</label>
+                <p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="vm.IdFormaPagamento" [filter]="true"></p-dropdown>
+            </div>
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Observações</label>
+                <textarea [rows]="3" pInputTextarea [(ngModel)]="vm.Observacao"></textarea> 
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Efetuar Baixa" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

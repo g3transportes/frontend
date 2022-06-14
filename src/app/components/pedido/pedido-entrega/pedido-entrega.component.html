@@ -1,0 +1,46 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Entrega de Pedido">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Ordem de Serviço</label>
+                <input type="text" pInputText [(ngModel)]="vm.OrdemServico" disabled> 
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Entrega</label>
+                <p-calendar appendTo="body" [(ngModel)]="vm.DataEntrega" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true"></p-calendar>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item" *ngIf="vm.Cliente != null">
+                <label>Cliente</label>
+                <input type="text" pInputText [(ngModel)]="vm.Cliente.RazaoSocial"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Motorista</label>
+                <input type="text" pInputText [(ngModel)]="vm.Caminhao.Motorista.Nome"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>CTe</label>
+                <input type="text" pInputText [(ngModel)]="vm.CTe"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>NFe</label>
+                <input type="text" pInputText [(ngModel)]="vm.NFe"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Boleto</label>
+                <input type="text" pInputText [(ngModel)]="vm.Boleto"> 
+            </div>
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Observações</label>
+                <textarea [rows]="3" pInputTextarea [(ngModel)]="vm.Observacao"></textarea> 
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Entregar Pedido" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

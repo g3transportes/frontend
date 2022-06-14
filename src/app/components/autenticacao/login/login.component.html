@@ -1,0 +1,36 @@
+<p-card class="login-card">
+    <p-header>
+        <img class="login-header" src="assets/images/common/logo.png">
+    </p-header>
+    
+    <div class="ui-g ui-fluid">
+        <div class="ui-g-12">
+            <span class="ui-float-label">
+                <input id="tbEmail" type="text" pInputText [(ngModel)]="vm.Email"> 
+                <label for="tbEmail">Email</label>
+            </span>
+        </div>
+        <div class="ui-g-12 padding-top-1">
+            <span class="ui-float-label">
+                <input id="tbSenha" type="password" pPassword [(ngModel)]="vm.Password" [feedback]="false" (keyup.enter)="onLogin_Click()"> 
+                <label for="tbSenha">Senha</label>
+            </span>
+        </div>    
+    </div>
+
+    <p-footer>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <button pButton type="button" label="Login" class="ui-button-secondary" (click)="onLogin_Click()" [disabled]="loading.Status"></button>
+            </div>
+            
+            <div class="ui-g-12 text-align-center">
+                <a (click)="onRecover_Click()">Esqueci minha senha</a>
+            </div>
+
+            <div class="ui-g-12" style="height: 6px;">
+                <p-progressBar mode="indeterminate" [style]="{'height': '6px'}" *ngIf="loading.Status == true"></p-progressBar>
+            </div>  
+        </div>      
+    </p-footer>
+</p-card>

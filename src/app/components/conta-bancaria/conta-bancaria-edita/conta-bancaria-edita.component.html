@@ -1,0 +1,53 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Registro">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-12 p-lg-12 ui-fluid form-item">
+                <label>Nome da Conta</label>
+                <input type="text" pInputText [(ngModel)]="vm.Nome"> 
+            </div>
+            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                <label>Banco</label>
+                <input type="text" pInputText [(ngModel)]="vm.Banco"> 
+            </div>
+            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                <label>Agência</label>
+                <input type="text" pInputText [(ngModel)]="vm.Agencia"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Operação</label>
+                <input type="text" pInputText [(ngModel)]="vm.Operacao"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Conta</label>
+                <input type="text" pInputText [(ngModel)]="vm.Conta"> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Titular</label>
+                <input type="text" pInputText [(ngModel)]="vm.Titular"> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Documento</label>
+                <input type="text" pInputText [(ngModel)]="vm.Documento" cpfCnpjMask> 
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Saldo Inicial</label>
+                <input type="text" pInputText [(ngModel)]="vm.SaldoInicial" dinheiroMask> 
+            </div>
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Observações</label>
+                <textarea [rows]="3" pInputTextarea [(ngModel)]="vm.Observacao"></textarea> 
+            </div>
+            <div class="p-col-12" *ngIf="vm.Id != 0">
+                <p-checkbox label="Registro ativo" [(ngModel)]="vm.Ativo" binary="true"></p-checkbox>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

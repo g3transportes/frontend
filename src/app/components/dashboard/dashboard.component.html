@@ -1,0 +1,658 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="p-grid content-outlet">
+    <div class="p-col-12">
+        <div class="dashboard-timer">
+            <span>
+                Próxima atualização em {{ timeLeft }} segundos
+            </span>
+            <button pButton type="button" label="Recarregar" icon="pi pi-refresh" class="ui-button-grey" (click)="onRecarrega_Click()"></button>
+
+        </div>
+
+        <p-tabView>
+            <p-tabPanel header="Pedidos">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <button pButton type="button" label="Adicionar Pedido" icon="pi pi-plus" (click)="onPedidoAdiciona_Click()"></button>
+                    </div>
+
+                    <!-- SOLICITACAO DE PEDIDO-->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Solicitações de Coleta" [toggleable]="true">
+                            <p-table [value]="vmPedidoSolicitacao.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 140px">Pedido</th>
+                                        <th style="width: 90px">Data</th>
+                                        <th>Cliente</th>
+                                        <th style="width: 90px">Qtde</th>
+                                        <th style="width: 100px">Frete</th>
+                                        <th style="width: 100px">Valor G3</th>
+                                        <th style="width: 100px">Margem</th>
+                                        <th style="width: 80px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td>
+                                            <a (click)="onPedidoEdita_Click(item)">
+                                                {{ item.NumPedido }}
+                                            </a>
+                                        </td>
+                                        <td>{{ item.DataCriacao | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                {{ item.Cliente.RazaoSocial }}
+                                            </a>
+                                        </td>
+                                        <td>{{ item.Quantidade }}</td>
+                                        <td>{{ item.ValorFrete | currency:'BRL' }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td>{{ item.ComissaoMargem | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            <a class="action-primary" (click)="onPedidoEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onPedidoDeleta_Click(item)" pTooltip="Excluir Pedido">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="8" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmPedidoSolicitacao.PageSize" [totalRecords]="vmPedidoSolicitacao.TotalItems" (onPageChange)="onPedidoSolicitacaoPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- PEDIDOS PARA COLETA -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Aguardando Coleta" [toggleable]="true">
+                            <p-table [value]="vmPedidoColeta.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 185px">OS</th>
+                                        <th style="width: 90px">Data</th>
+                                        <th>Cliente</th>
+                                        <th>Motorista</th>
+                                        <th style="width: 90px">Qtde</th>
+                                        <th style="width: 100px">Frete</th>
+                                        <th style="width: 100px">Valor G3</th>
+                                        <th style="width: 100px">Margem</th>
+                                        <th style="width: 110px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td>
+                                            <a (click)="onPedidoEdita_Click(item)" class="content-block" pTooltip="Editar Pedido">
+                                                {{ item.OrdemServico }}
+                                            </a>
+                                            <span *ngIf="item.NumPedido">Ped: {{ item.NumPedido }}</span>
+                                            <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                            <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                                            <span *ngIf="item.Boleto" class="content-block">Boleto {{ item.Boleto }}</span>
+                                        </td>
+                                        <!--
+                                        <td>
+                                            <span *ngIf="item.NumPedido">Ped: {{ item.NumPedido }}</span>
+                                            <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                            <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                                        </td>
+                                        -->
+                                        <td>{{ item.DataCriacao | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                {{ item.Cliente.RazaoSocial }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                {{ item.Caminhao.Placa }}
+                                            </a>
+                                            -
+                                            <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                {{ item.Caminhao.Motorista.Nome }}
+                                            </a>
+                                        </td>
+                                        <td>{{ item.Quantidade }}</td>
+                                        <td>{{ item.ValorFrete | currency:'BRL' }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td>{{ item.ComissaoMargem | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            <a class="action-primary" (click)="onPedidoFinaliza_Click(item)" pTooltip="Coletar Pedido">
+                                                <i class="pi pi-check-circle"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onPedidoImprime_Click(item)" pTooltip="Imprimir Pedido">
+                                                <i class="pi pi-print"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onPedidoDeleta_Click(item)" pTooltip="Excluir Pedido">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="9" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmPedidoColeta.PageSize" [totalRecords]="vmPedidoColeta.TotalItems" (onPageChange)="onPedidoColetaPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- PEDIDOS PARA ENTREGA -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Aguardando Entrega" [toggleable]="true">
+                            <p-table [value]="vmPedidoEntregue.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 185px">OS</th>
+                                        <th style="width: 90px">Coleta</th>
+                                        <th>Cliente</th>
+                                        <th>Motorista</th>
+                                        <th style="width: 90px">Qtde</th>
+                                        <th style="width: 100px">Frete</th>
+                                        <th style="width: 100px">Valor G3</th>
+                                        <th style="width: 100px">Margem</th>
+                                        <th style="width: 140px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td>
+                                            <a (click)="onPedidoEdita_Click(item)" class="content-block" pTooltip="Editar Pedido">
+                                                {{ item.OrdemServico }}
+                                            </a>
+                                            <span *ngIf="item.NumPedido">Ped: {{ item.NumPedido }}</span>
+                                            <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                            <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                                            <span *ngIf="item.Boleto" class="content-block">Boleto: {{ item.Boleto }}</span>
+                                        </td>
+                                        <!--
+                                        <td>
+                                            <span *ngIf="item.NumPedido">Ped: {{ item.NumPedido }}</span>
+                                            <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                            <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                                        </td>
+                                        -->
+                                        <td>{{ item.DataColeta | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                {{ item.Cliente.RazaoSocial }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                {{ item.Caminhao.Placa }}
+                                            </a>
+                                            -
+                                            <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                {{ item.Caminhao.Motorista.Nome }}
+                                            </a>
+                                        </td>
+                                        <td>{{ item.Quantidade }}</td>
+                                        <td>{{ item.ValorFrete | currency:'BRL' }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td>{{ item.ComissaoMargem | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            <a class="action-primary" (click)="onPedidoEntrega_Click(item)" pTooltip="Entregar Pedido">
+                                                <i class="pi pi-shopping-cart"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onPedidoImprime_Click(item)" pTooltip="Imprimir Pedido">
+                                                <i class="pi pi-print"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onPedidoEstorna_Click(item)" pTooltip="Estornar Coleta">
+                                                <i class="pi pi-undo"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onPedidoDeleta_Click(item)" pTooltip="Excluir Pedido">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="9" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmPedidoEntregue.PageSize" [totalRecords]="vmPedidoEntregue.TotalItems" (onPageChange)="onPedidoEntregaPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- GRAFICOS -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Acompanhamento do Mês" [toggleable]="true">
+
+                        </p-panel>
+                    </div>
+                </div>
+
+            </p-tabPanel>
+
+            <p-tabPanel header="Financeiro">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <button pButton type="button" label="Adicionar Lançamento" icon="pi pi-plus" (click)="onLancamentoAdiciona_Click()"></button>
+                        <span style="padding: 5px"></span>
+                        <p-dropdown appendTo="body" [options]="autorizacao" [(ngModel)]="mostraAutorizado" [filter]="true" (onChange)="onRecarrega_Click()"></p-dropdown>
+						<span style="padding: 5px"></span>
+						<p-calendar appendTo="body" [(ngModel)]="filtroDataEmissao" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onRecarrega_Click()" (onClearClick)="onRecarrega_Click()" (keyup.enter)="onRecarrega_Click()"></p-calendar>
+						<span style="padding: 5px"></span>
+						<p-dropdown appendTo="body" [options]="formasPagamento" [(ngModel)]="filtroFormaPagamento" [filter]="true" (onChange)="onRecarrega_Click()"></p-dropdown>
+						<span style="padding: 5px"></span>
+						<p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="filtroContaBancaria" [filter]="true" (onChange)="onRecarrega_Click()"></p-dropdown>
+					</div>
+
+                    <!-- LANCAMENTOS A PAGAR -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Contas a Pagar" [toggleable]="true">
+                            <p-table [value]="vmFinancPagar.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 70px">Tipo</th>
+                                        <th style="width: 70px;">Aut.</th>
+                                        <th style="width: 90px">Emissão</th>
+                                        <th style="width: 90px">Vencimento</th>
+                                        <th style="width: 160px">Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Caminhao</th>
+                                        <th>Forma Pgto</th>
+                                        <th style="width: 100px">Valor</th>
+                                        <th style="width: 100px">Vlr Baixa (Saldo)</th>
+                                        <th style="width: 110px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                                        </td>
+                                        <td class="text-align-center">
+                                            <p-checkbox [(ngModel)]="item.Autorizado" binary="true" (onChange)="onAutorizacao_Change(item)"></p-checkbox>
+                                        </td>
+                                        <td>{{ item.DataEmissao | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ item.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <ng-container *ngIf="item.Pedido != null">
+                                                <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                                    {{ item.Pedido.OrdemServico }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Cliente != null">
+                                                <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                    {{ item.Cliente.RazaoSocial }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Cliente == null">{{ item.Favorecido }}</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Caminhao != null">
+                                                <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                    {{ item.Caminhao.Placa }}
+                                                </a>
+                                                -
+                                                <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                    {{ item.Caminhao.Motorista.Nome }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Caminhao == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>{{ item.FormaPagamento.Nome }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            {{ item.ValorBaixado | currency:'BRL' }}
+                                            <ng-container *ngIf="item.ValorSaldo != 0">
+                                                <span class="text-blue">({{ item.ValorSaldo | currency:'BRL' }})</span>
+                                            </ng-container>
+
+                                        </td>
+                                        <td class="text-align-right">
+                                            <a class="action-primary" (click)="onLancamentoBaixa_Click(item)">
+                                                <i class="pi pi-check-circle"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onLancamentoEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onLancamentoDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmFinancPagar.PageSize" [totalRecords]="vmFinancPagar.TotalItems" (onPageChange)="onFinancPagarPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- LANCAMENTOS A RECEBER -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Contas a Receber" [toggleable]="true">
+                            <p-table [value]="vmFinancReceber.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 70px">Tipo</th>
+                                        <th style="width: 70px;">Aut.</th>
+                                        <th style="width: 90px">Emissão</th>
+                                        <th style="width: 90px">Vencimento</th>
+                                        <th style="width: 160px">Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Caminhao</th>
+                                        <th>Forma Pgto</th>
+                                        <th style="width: 100px">Valor</th>
+                                        <th style="width: 100px">Vlr Baixa (Saldo)</th>
+                                        <th style="width: 110px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                                        </td>
+                                        <td class="text-align-center">
+                                            <p-checkbox [(ngModel)]="item.Autorizado" binary="true" (onChange)="onAutorizacao_Change(item)"></p-checkbox>
+                                        </td>
+                                        <td>{{ item.DataEmissao | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ item.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <ng-container *ngIf="item.Pedido != null">
+                                                <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                                    {{ item.Pedido.OrdemServico }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Cliente != null">
+                                                <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                    {{ item.Cliente.RazaoSocial }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Cliente == null">{{ item.Favorecido }}</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Caminhao != null">
+                                                <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                    {{ item.Caminhao.Placa }}
+                                                </a>
+                                                -
+                                                <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                    {{ item.Caminhao.Motorista.Nome }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Caminhao == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>{{ item.FormaPagamento.Nome }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            {{ item.ValorBaixado | currency:'BRL' }}
+                                            <ng-container *ngIf="item.ValorSaldo != 0">
+                                                <span class="text-blue">({{ item.ValorSaldo | currency:'BRL' }})</span>
+                                            </ng-container>
+
+                                        </td>
+                                        <td class="text-align-right">
+                                            <a class="action-primary" (click)="onLancamentoBaixa_Click(item)">
+                                                <i class="pi pi-check-circle"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onLancamentoEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onLancamentoDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmFinancReceber.PageSize" [totalRecords]="vmFinancReceber.TotalItems" (onPageChange)="onFinancReceberPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- LANCAMENTOS PAGOS -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Contas Pagas" [toggleable]="true">
+                            <p-table [value]="vmFinancPago.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 70px">Tipo</th>
+                                        <th style="width: 70px;">Aut.</th>
+                                        <th style="width: 90px">Vencimento</th>
+                                        <th style="width: 90px">Baixa</th>
+                                        <th style="width: 160px">Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Caminhao</th>
+                                        <th>Forma Pgto</th>
+                                        <th style="width: 100px">Valor</th>
+                                        <th style="width: 100px">Vlr Baixado</th>
+                                        <th style="width: 110px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                                        </td>
+                                        <td class="text-align-center">
+                                            <p-checkbox [(ngModel)]="item.Autorizado" binary="true" (onChange)="onAutorizacao_Change(item)"></p-checkbox>
+                                        </td>
+                                        <td>{{ item.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ item.DataBaixa | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <ng-container *ngIf="item.Pedido != null">
+                                                <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                                    {{ item.Pedido.OrdemServico }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Cliente != null">
+                                                <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                    {{ item.Cliente.RazaoSocial }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Cliente == null">{{ item.Favorecido }}</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Caminhao != null">
+                                                <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                    {{ item.Caminhao.Placa }}
+                                                </a>
+                                                -
+                                                <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                    {{ item.Caminhao.Motorista.Nome }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Caminhao == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>{{ item.FormaPagamento.Nome }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            {{ item.ValorBaixado | currency:'BRL' }}
+                                        </td>
+                                        <td class="text-align-right">
+                                            <a class="action-primary" (click)="onLancamentoEstorna_Click(item)">
+                                                <i class="pi pi-undo"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onLancamentoEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onLancamentoDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmFinancPago.PageSize" [totalRecords]="vmFinancPago.TotalItems" (onPageChange)="onFinancPagoPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- LANCAMENTOS RECEBIDOS -->
+                    <div class="p-col-12 p-md-12 p-lg-12">
+                        <p-panel header="Contas Recebidas" [toggleable]="true">
+                            <p-table [value]="vmFinancRecebido.Items">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width: 70px">Tipo</th>
+                                        <th style="width: 70px;">Aut.</th>
+                                        <th style="width: 90px">Vencimento</th>
+                                        <th style="width: 90px">Baixa</th>
+                                        <th style="width: 160px">Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Caminhao</th>
+                                        <th>Forma Pgto</th>
+                                        <th style="width: 100px">Valor</th>
+                                        <th style="width: 100px">Vlr Baixado</th>
+                                        <th style="width: 110px">Ações</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="text-align-center">
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                            <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                                        </td>
+                                        <td class="text-align-center">
+                                            <p-checkbox [(ngModel)]="item.Autorizado" binary="true" (onChange)="onAutorizacao_Change(item)"></p-checkbox>
+                                        </td>
+                                        <td>{{ item.DataVencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ item.DataBaixa | date : 'dd/MM/yyyy' }}</td>
+                                        <td>
+                                            <ng-container *ngIf="item.Pedido != null">
+                                                <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                                    {{ item.Pedido.OrdemServico }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Cliente != null">
+                                                <a (click)="onClienteEdita_Click(item.Cliente)" pTooltip="Editar Cliente">
+                                                    {{ item.Cliente.RazaoSocial }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Cliente == null">{{ item.Favorecido }}</ng-container>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="item.Caminhao != null">
+                                                <a (click)="onCaminhaoEdita_Click(item.Caminhao)" pTooltip="Editar Caminhão">
+                                                    {{ item.Caminhao.Placa }}
+                                                </a>
+                                                -
+                                                <a (click)="onMotoristaEdita_Click(item.Caminhao.Motorista)" pTooltip="Editar Motorista">
+                                                    {{ item.Caminhao.Motorista.Nome }}
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="item.Caminhao == null">Não Informado</ng-container>
+                                        </td>
+                                        <td>{{ item.FormaPagamento.Nome }}</td>
+                                        <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                                        <td class="text-align-center">
+                                            {{ item.ValorBaixado | currency:'BRL' }}
+                                        </td>
+                                        <td class="text-align-right">
+                                            <a class="action-primary" (click)="onLancamentoEstorna_Click(item)">
+                                                <i class="pi pi-undo"></i>
+                                            </a>
+                                            <a class="action-primary" (click)="onLancamentoEdita_Click(item)">
+                                                <i class="pi pi-pencil"></i>
+                                            </a>
+                                            <a class="action-danger" (click)="onLancamentoDeleta_Click(item)">
+                                                <i class="pi pi-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="11" class="text-align-center">
+                                            Nenhum registro encontrado
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+                            <p-paginator [rows]="vmFinancRecebido.PageSize" [totalRecords]="vmFinancRecebido.TotalItems" (onPageChange)="onFinancRecebidoPage_Change($event)" styleClass="table-paginator"></p-paginator>
+                        </p-panel>
+                    </div>
+
+                    <!-- GRAFICOS -->
+                    <div class="p-col-12 p-md-6 p-lg-6">
+                        <p-panel header="A Pagar X A Receber" [toggleable]="true">
+
+                        </p-panel>
+                    </div>
+
+                    <div class="p-col-12 p-md-6 p-lg-6">
+                        <p-panel header="Pago X A Recebido" [toggleable]="true">
+
+                        </p-panel>
+                    </div>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>
+
+<p-toast></p-toast>

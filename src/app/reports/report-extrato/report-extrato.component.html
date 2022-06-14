@@ -1,0 +1,196 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-3 p-lg-3">
+                        <p-panel header="Parametros">
+                            <div class="p-grid">
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Período</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataInicio" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataFim" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Banco / Conta</label>
+                                    <p-dropdown appendTo="body" [options]="contasBancarias" [(ngModel)]="filtro.Conta" [filter]="true"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <p-footer>
+                                <button pButton type="button" icon="pi pi-cog" iconPos="left" label="Gera Relatório" (click)="onGerar_Click()"></button>
+                            </p-footer>
+                        </p-panel>
+                    </div>
+
+                    <div class="p-col-12 p-md-9 p-lg-9">
+                        <p-toolbar>
+                            <div class="ui-toolbar-group-right">
+                                <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                            </div>
+							<div class="ui-toolbar-group-right" style="margin-right:10px;">
+								<button pButton type="button" label="Exportar Excel" icon="pi pi-download pi" (click)="onExportXls_Click()"></button>
+							</div>
+
+						</p-toolbar>
+
+                        <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                            <table>
+                                <tr>
+                                    <td class="align-left">
+                                        <img src="/assets/images/common/logo-menu.png">
+                                    </td>
+                                    <td class="align-right">
+                                        <label class="relatorio-title align-right">Relatório de Extrato</label>
+                                        <label class="relatorio-subtitle align-right">
+                                            Período: {{ filtro.DataInicio | date : 'dd/MM/yyyy' }} - {{ filtro.DataFim | date : 'dd/MM/yyyy' }}
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="relatorio-separator"></div>
+
+                            <ng-container *ngFor="let item of vm.Items">
+                                <!--RESUMO-->
+                                <table>
+                                    <tr>
+                                        <th colspan="7">{{ item.Conta }}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Saldo Anterior</th>
+                                        <th>Créditos</th>
+                                        <th>Débitos</th>
+                                        <th>Saldo Atual</th>
+                                        <th>Créditos Em Aberto</th>
+                                        <th>Débitos Em Aberto</th>
+                                        <th>Saldo Previsto</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-center">
+                                            <span class="text-blue" *ngIf="item.SaldoAnterior >= 0">{{ item.SaldoAnterior | currency:'BRL' }}</span>
+                                            <span class="text-red" *ngIf="item.SaldoAnterior < 0">{{ item.SaldoAnterior | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center">
+                                            <span class="text-blue">{{ item.CreditoBaixado | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center">
+                                            <span class="text-red">{{ item.DebitoBaixado | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center text-bold">
+                                            <span class="text-blue" *ngIf="item.Saldo >= 0">{{ item.Saldo | currency:'BRL' }}</span>
+                                            <span class="text-red" *ngIf="item.Saldo < 0">{{ item.Saldo | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center">
+                                            <span class="text-blue">{{ item.CreditoAberto | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center">
+                                            <span class="text-red">{{ item.DebitoAberto | currency:'BRL' }}</span>
+                                        </td>
+                                        <td class="align-center text-bold">
+                                            <span class="text-blue" *ngIf="item.SaldoPrevisto >= 0">{{ item.SaldoPrevisto | currency:'BRL' }}</span>
+                                            <span class="text-red" *ngIf="item.SaldoPrevisto < 0">{{ item.SaldoPrevisto | currency:'BRL' }}</span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <div class="padding-10"></div>
+
+                                <!--CREDITOS-->
+                                <table *ngIf="item.Creditos.length > 0">
+                                    <tr>
+                                        <th colspan="9" class="align-center">Créditos</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 50px;">Tipo</th>
+                                        <th style="width: 100px;">Vencimento</th>
+                                        <th style="width: 100px;">Baixa</th>
+                                        <th>Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Caminhão</th>
+                                        <th>Forma Pgto</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                    <tr *ngFor="let cred of item.Creditos">
+                                        <td class="text-align-center">
+                                            <label class="message-blue padding-info">{{ cred.Tipo }}</label>
+                                        </td>
+                                        <td class="align-left">{{ cred.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td class="align-left">{{ cred.Baixa | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ cred.OrdemServico }}</td>
+                                        <td>{{ cred.Cliente }}</td>
+                                        <td>{{ cred.Motorista }}</td>
+                                        <td>{{ cred.FormaPagamento }}</td>
+                                        <td>{{ cred.ValorBaixado | currency:'BRL' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="9" class="align-right text-bold">
+                                            Total: {{ item.CreditoBaixado | currency:'BRL' }}
+                                        </th>
+                                    </tr>
+                                </table>
+
+                                <div class="padding-10"></div>
+
+                                <!--DEBITOS-->
+                                <table *ngIf="item.Debitos.length > 0">
+                                    <tr>
+                                        <th colspan="9" class="align-center">Débitos</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 50px;">Tipo</th>
+                                        <th style="width: 100px;">Vencimento</th>
+                                        <th style="width: 100px;">Baixa</th>
+                                        <th>Pedido</th>
+                                        <th>Fornecedor</th>
+                                        <th>Caminhão</th>
+                                        <th>Forma Pgto</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                    <tr *ngFor="let deb of item.Debitos">
+                                        <td class="text-align-center">
+                                            <label class="message-red padding-info">{{ deb.Tipo }}</label>
+                                        </td>
+                                        <td class="align-left">{{ deb.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                        <td class="align-left">{{ deb.Baixa | date : 'dd/MM/yyyy' }}</td>
+                                        <td>{{ deb.OrdemServico }}</td>
+                                        <td>{{ deb.Cliente }}</td>
+                                        <td>{{ deb.Motorista }}</td>
+                                        <td>{{ deb.FormaPagamento }}</td>
+                                        <td>{{ deb.ValorBaixado | currency:'BRL' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="9" class="align-right text-bold">
+                                            Total: {{ item.DebitoBaixado | currency:'BRL' }}
+                                        </th>
+                                    </tr>
+                                </table>
+
+                                <div class="padding-20">
+                                    <hr>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

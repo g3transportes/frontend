@@ -1,0 +1,14 @@
+<div class="p-grid p-justify-end header-container">
+    <div class="p-col-fixed" style="width:125px">
+        <a [routerLink]="[ '/' ]">
+            <img src="assets/images/common/logo-menu.png">
+        </a>
+    </div>
+    <div class="p-col p-col-align-center text-align-right">
+        <app-menu></app-menu>
+    </div>
+</div>
+
+<div class="content-container">
+    <router-outlet></router-outlet>
+</div>

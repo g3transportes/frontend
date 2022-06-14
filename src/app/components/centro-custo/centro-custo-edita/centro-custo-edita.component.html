@@ -1,0 +1,39 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<p-tabView *ngIf="vm != null">
+    <p-tabPanel header="Informações do Registro">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Tipo de Conta</label>
+                <p-dropdown appendTo="body" [options]="tipos" [(ngModel)]="vm.Tipo"></p-dropdown>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                <label>Nome</label>
+                <input type="text" pInputText [(ngModel)]="vm.Nome">
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                <label>Referência</label>
+                <input type="text" pInputText [(ngModel)]="vm.Referencia">
+            </div>
+            <div class="p-col-12 ui-fluid form-item">
+                <label>Observações</label>
+                <textarea [rows]="3" pInputTextarea [(ngModel)]="vm.Descricao"></textarea>
+            </div>
+            <div class="p-col-12" *ngIf="vm.Id != 0">
+                <p-checkbox label="Conta padrão" [(ngModel)]="vm.Padrao" binary="true"></p-checkbox>
+            </div>
+			<div class="p-col-12" *ngIf="vm.Id != 0">
+				<p-checkbox label="Pode fazer lançamento financeiro" [(ngModel)]="vm.UltimoNivel" binary="true"></p-checkbox>
+			</div>
+            <div class="p-col-12" *ngIf="vm.Id != 0">
+                <p-checkbox label="Registro ativo" [(ngModel)]="vm.Ativo" binary="true"></p-checkbox>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+<div class="form-footer">
+    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+</div>

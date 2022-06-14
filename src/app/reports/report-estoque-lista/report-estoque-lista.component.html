@@ -1,0 +1,84 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-3 p-lg-3">
+                        <p-panel header="Parametros">
+                            <div class="p-grid">
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Remetentes</label>
+                                    <p-multiSelect appendTo="body" [options]="remetentes" [defaultLabel]="'Todos os registros'" [(ngModel)]="filtro.CodigoValue" [filter]="true"></p-multiSelect>
+                                </div>
+                            </div>
+                
+                            <p-footer>
+                                <div class="p-grid">
+                                    <div class="p-col-12 p-md-12 p-lg-12 ui-fluid">
+                                        <button pButton type="button" icon="pi pi-cog" iconPos="left" label="Gera Relatório" (click)="onGerar_Click()"></button>        
+                                    </div>
+                                </div>
+                            </p-footer>
+                        </p-panel>
+                    </div>
+                
+                    <div class="p-col-12 p-md-9 p-lg-9">
+                        <p-toolbar>
+                            <div class="ui-toolbar-group-right">
+                                <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                            </div>
+                        </p-toolbar>
+                        
+                        <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                            <table>
+                                <tr>
+                                    <td class="align-left">
+                                        <img src="/assets/images/common/logo-menu.png">
+                                    </td>
+                                    
+                                    <td class="align-right" colspan="4">
+                                        <span class="relatorio-title align-right">
+                                            Relatório de Estoque
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Remetente</th>
+                                    <th>Cidade</th>
+                                    <th style="width: 90px;">Telefone</th>
+                                    <th style="width: 90px;">Celular</th>
+                                    <th style="width: 90px;">Estoque Atual</th>
+                                </tr>
+                                <ng-container *ngFor="let item of vm">
+                                    <tr class="relatorio-item-border">
+                                        <td>{{ item.RazaoSocial }}</td>
+                                        <td>{{ item.EndCidade }} / {{ item.EndEstado }}</td>
+                                        <td>{{ item.Telefone1 }}</td>
+                                        <td>{{ item.Telefone2 }}</td>
+                                        <td class="text-align-center">{{ item.EstoqueAtual }}</td>
+                                    </tr>
+                                </ng-container>
+                                
+                                <tr>
+                                    <td colspan="5" class="align-right text-bold">
+                                        <div class="align-right text-bold">Estoque Total: {{ calculaSaldo() }}</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

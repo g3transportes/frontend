@@ -1,0 +1,103 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                </p-toolbar>
+                
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 90px">Tipo</th>
+                            <th style="width: 110px">Data</th>
+                            <th style="width: 250px">Remetente</th>
+                            <th style="width: 200px">Pedido</th>
+                            <th>Descrição</th>
+                            <th style="width: 100px">Quantidade</th>
+                            <th style="width: 90px">Ações</th>
+                        </tr>
+                        <tr>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="tipos" [(ngModel)]="filtro.TipoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroData" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="remetentes" [(ngModel)]="filtro.RemetenteValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="pedidos" [(ngModel)]="filtro.PedidoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item"></th>
+                            <th class="ui-fluid form-item"></th>
+                            <th>
+                                <a class="action-primary" (click)="onFilter_Click()">
+                                    <i class="pi pi-filter"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td class="text-align-center">
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-info" *ngIf="item.Tipo == 'C'"></button>
+                                <button type="button" pButton [label]="item.Tipo" class="ui-button-danger" *ngIf="item.Tipo == 'D'"></button>
+                            </td>
+                            <td>{{ item.Data | date : 'dd/MM/yyyy' }}</td>
+                            <td>
+                                <ng-container *ngIf="item.Remetente != null">
+                                    <a (click)="onRemetenteEdita_Click(item.Remetente)" pTooltip="Editar Remetente">
+                                        {{ item.Remetente.RazaoSocial }}
+                                    </a>
+                                </ng-container>
+                                <ng-container *ngIf="item.Remetente == null">Não Informado</ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="item.Pedido != null">
+                                    <a (click)="onPedidoEdita_Click(item.Pedido)" pTooltip="Editar Pedido">
+                                        {{ item.Pedido.OrdemServico }}
+                                    </a>
+                                </ng-container>
+                                <ng-container *ngIf="item.Pedido == null">Não Informado</ng-container>
+                            </td>
+                            
+                            <td>{{ item.Descricao }}</td>
+                            <td>{{ item.Quantidade }}</td>
+                            <td class="text-align-right">
+                                <a class="action-primary" (click)="onEdita_Click(item)">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>

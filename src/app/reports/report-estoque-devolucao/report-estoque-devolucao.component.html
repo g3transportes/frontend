@@ -1,0 +1,183 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-3 p-lg-3">
+                        <p-panel header="Parametros">
+                            <div class="p-grid">
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Coleta</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataColetaMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataColetaMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Devolução</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataDevolucaoMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.DataDevolucaoMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Cliente</label>
+                                    <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="filtro.ClienteValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Status de Coleta</label>
+                                    <p-dropdown appendTo="body" [options]="statusColeta" [(ngModel)]="filtro.ColetadoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item">
+                                    <label>Status de Devolução</label>
+                                    <p-dropdown appendTo="body" [options]="status" [(ngModel)]="filtro.DevolvidoValue" [filter]="true"></p-dropdown>
+                                </div>
+                            </div>
+                
+                            <p-footer>
+                                <div class="p-grid">
+                                    <div class="p-col-12 p-md-12 p-lg-12 ui-fluid">
+                                        <button pButton type="button" icon="pi pi-cog" iconPos="left" label="Gera Relatório" (click)="onGerar_Click()"></button>        
+                                    </div>
+                                </div>
+                            </p-footer>
+                        </p-panel>
+                    </div>
+                
+                    <div class="p-col-12 p-md-9 p-lg-9">
+                        <p-toolbar>
+                            <div class="ui-toolbar-group-right">
+                                <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                            </div>
+                        </p-toolbar>
+                        
+                        <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                            <table>
+                                <tr>
+                                    <td class="align-left">
+                                        <img src="/assets/images/common/logo-menu.png">
+                                    </td>
+                                    
+                                    <td class="align-right" colspan="6">
+                                        <span class="relatorio-title align-right">
+                                            Relatório de Devolução
+                                        </span>
+                                        
+                                        <span class="relatorio-subtitle align-right" *ngIf="filtro.DataColetaMinValue != null">
+                                            Coleta: {{ filtro.DataColetaMinValue | date : 'dd/MM/yyyy' }} - {{ filtro.DataColetaMaxValue | date : 'dd/MM/yyyy' }}
+                                        </span>
+                                        
+                                        <span class="relatorio-subtitle align-right" *ngIf="filtro.DataEntregaMinValue != null">
+                                            Devolução: {{ filtro.DataDevolucaoMinValue | date : 'dd/MM/yyyy' }} - {{ filtro.DataDevolucaoMaxValue | date : 'dd/MM/yyyy' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <ng-container *ngFor="let grupo of grupos">
+                                <table *ngIf="pegaTotalPeletes(grupo) > 0">
+                                    <tr>
+                                        <th colspan="7">{{ grupo.RazaoSocial }}</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 150px;">OS</th>
+                                        <th style="width: 120px;">Datas</th>
+                                        <th>Detalhes</th>
+                                        <th style="width: 90px;">Paletes</th>
+                                        <th style="width: 90px;">Devolvidos</th>
+                                        <th style="width: 90px;">Pendência</th>
+                                        <th style="width: 60px;"></th>
+                                    </tr>
+                                    <ng-container *ngFor="let item of pegaLista(grupo)">
+                                        <tr class="relatorio-item-border">
+                                            <td style="vertical-align: top !important;">
+                                                <span class="content-block" *ngIf="item.OrdemServico">
+                                                    <strong>OS:</strong> {{ item.OrdemServico }}
+                                                </span>
+                                                
+                                                <span class="content-block" *ngIf="item.NumPedido">
+                                                    <strong>Num. Ped:</strong> {{ item.NumPedido }}
+                                                </span>
+    
+                                                <span class="content-block" *ngIf="item.CTe">
+                                                    <strong>CTe:</strong> {{ item.CTe }}
+                                                </span>
+    
+                                                <span class="content-block" *ngIf="item.NFe">
+                                                    <strong>NFe:</strong> {{ item.NFe }}
+                                                </span>
+
+                                                <span class="content-block" *ngIf="item.Boleto">
+                                                    <strong>Boleto:</strong> {{ item.Boleto }}
+                                                </span>
+                                            </td>
+                                            <td style="vertical-align: top !important;">
+                                                <span class="content-block" *ngIf="item.DataColeta">
+                                                    <strong>Coleta:</strong> {{ item.DataColeta | date : 'dd/MM/yyyy' }}
+                                                </span>
+                                                
+                                                <span class="content-block" *ngIf="item.DataDevolucao">
+                                                    <strong>Devolução:</strong> {{ item.DataDevolucao | date : 'dd/MM/yyyy' }}
+                                                </span>
+                                            </td>
+                                            <td style="vertical-align: top !important;">
+                                                <span class="content-block" *ngIf="item.Cliente">
+                                                    <strong>Cliente:</strong> {{ item.Cliente.RazaoSocial }}
+                                                </span>
+                                                
+                                                <span class="content-block" *ngIf="item.Remetente">
+                                                    <strong>Remetente:</strong> {{ item.Remetente.RazaoSocial }}
+                                                </span>
+    
+                                                <span class="content-block" *ngIf="item.Caminhao != null">
+                                                    <strong>Motorista:</strong> {{ item.Caminhao.Placa }} - {{ item.Caminhao.Motorista.Nome }}
+                                                </span>
+                                            </td>
+                                            <td class="text-align-center" style="vertical-align: top !important;">{{ item.Paletes }}</td>
+                                            <td class="text-align-center" style="vertical-align: top !important;">{{ item.PaletesDevolvidos }}</td>
+                                            <td class="text-align-center" style="vertical-align: top !important;">{{ item.Paletes - item.PaletesDevolvidos }}</td>
+                                            <td class="text-align-center" style="vertical-align: top !important;">
+                                                <a class="action-primary" (click)="onAdicionaMovimentacao(item)" *ngIf="item.Devolvido == false">
+                                                    <i class="pi pi-shopping-cart"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr>
+                                        <td colspan="7" class="align-right text-bold">
+                                            <div class="align-right text-bold">Total Paletes: {{ pegaTotalPeletes(grupo) }}</div>
+                                            <div class="align-right text-bold">Total Devolvidos: {{ pegaTotalDevolvidos(grupo) }}</div>
+                                            <div class="align-right text-bold">Total Pendências: {{ pegaTotalPendencia(grupo) }}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

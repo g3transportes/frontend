@@ -1,0 +1,123 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            
+            <div class="p-col-12">
+                <p-tabView *ngIf="vm != null">
+                    <p-tabPanel header="Configurações Gerais">
+                        <div class="p-grid">
+                            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                                <label>Razão Social</label>
+                                <input type="text" pInputText [(ngModel)]="vm.RazaoSocial"> 
+                            </div>
+                            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                                <label>Nome Fantasia</label>
+                                <input type="text" pInputText [(ngModel)]="vm.NomeFantasia"> 
+                            </div>
+
+                            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                                <label>CNPJ</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Documento1"> 
+                            </div>
+                            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                                <label>Inscrição Estadual</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Documento2"> 
+                            </div>
+                            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                                <label>Email</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Email"> 
+                            </div>
+
+                            <div class="p-col-12 p-md-6 p-lg-6 ui-fluid form-item">
+                                <label>Contato</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Contato"> 
+                            </div>
+                            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                                <label>Telefone</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Telefone1"> 
+                            </div>
+                            <div class="p-col-12 p-md-3 p-lg-3 ui-fluid form-item">
+                                <label>Celular</label>
+                                <input type="text" pInputText [(ngModel)]="vm.Telefone2"> 
+                            </div>
+                            
+                            <div class="p-col-12 form-item">
+                                <hr>
+                            </div>
+                            
+                            <div class="p-col-12 p-md-8 p-lg-8 ui-fluid form-item">
+                                <label>Rua</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndRua"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Número</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndNumero"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Complemento</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndComplemento"> 
+                            </div>
+
+                            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                                <label>Bairro</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndBairro"> 
+                            </div>
+                            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                                <label>Cidade</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndCidade"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Estado</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndEstado"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Cep</label>
+                                <input type="text" pInputText [(ngModel)]="vm.EndCep"> 
+                            </div>
+
+                            <div class="p-col-12 form-item">
+                                <hr>
+                            </div>
+
+                            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                                <label>Endereço SMTP</label>
+                                <input type="text" pInputText [(ngModel)]="vm.SmtpHost"> 
+                            </div>
+                            <div class="p-col-12 p-md-4 p-lg-4 ui-fluid form-item">
+                                <label>Usuário SMTP</label>
+                                <input type="text" pInputText [(ngModel)]="vm.SmtpUsuario"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Senha SMTP</label>
+                                <input type="text" pInputText [(ngModel)]="vm.SmtpSenha"> 
+                            </div>
+                            <div class="p-col-12 p-md-2 p-lg-2 ui-fluid form-item">
+                                <label>Senha SMTP</label>
+                                <input type="number" pInputText [(ngModel)]="vm.SmtpPorta"> 
+                            </div>
+                            <div class="p-col-12">
+                                <p-checkbox label="Servidor SSL" [(ngModel)]="vm.SmtpSSL" binary="true"></p-checkbox>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+
+            <div class="p-col-12">
+                <div class="form-footer">
+                    <button pButton type="button" icon="pi pi-save" iconPos="left" label="Salvar Registro" class="float-right" (click)="onSalvar_Click()" [disabled]="loading.Status"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

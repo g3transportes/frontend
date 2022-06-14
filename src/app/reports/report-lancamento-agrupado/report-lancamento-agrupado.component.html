@@ -1,0 +1,442 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-3 p-lg-3">
+                        <p-panel header="Parametros">
+                            <div class="p-grid">
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Emissão</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.EmissaoMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.EmissaoMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item ui-g-12 ui-g-nopad">
+                                    <div class="ui-g-12 ui-g-nopad">
+                                        <label>Vencimento</label>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-right: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.VencimentoMinValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                    <div class="ui-g-6 ui-g-nopad" style="padding-left: 0.25em;">
+                                        <p-calendar appendTo="body" [(ngModel)]="filtro.VencimentoMaxValue" [showIcon]="true" [locale]="localeBR" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item" *ngIf="reportType == 'cliente'">
+                                    <label>Cliente</label>
+                                    <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="filtro.ClienteValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item" *ngIf="reportType == 'caminhao'">
+                                    <label>Caminhão</label>
+                                    <p-dropdown appendTo="body" [options]="caminhoes" [(ngModel)]="filtro.CaminhaoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item" *ngIf="reportType == 'proprietario'">
+                                    <label>Proprietário</label>
+                                    <p-dropdown appendTo="body" [options]="proprietarios" [(ngModel)]="filtro.ProprietarioValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12 ui-fluid form-item" *ngIf="reportType == 'plano-conta'">
+                                    <label>Conta Gerencial</label>
+                                    <p-dropdown appendTo="body" [options]="ccustos" [(ngModel)]="filtro.CentroCustoValue" [filter]="true"></p-dropdown>
+                                </div>
+
+                                <div class="p-col-12">
+                                    <p-checkbox label="Exibe lancamentos a receber" [(ngModel)]="mostraReceber" binary="true"></p-checkbox>
+                                </div>
+                                <div class="p-col-12">
+                                    <p-checkbox label="Exibe lancamentos recebidos" [(ngModel)]="mostraRecebido" binary="true"></p-checkbox>
+                                </div>
+
+                                <div class="p-col-12">
+                                    <p-checkbox label="Exibe lancamentos a pagar" [(ngModel)]="mostraPagar" binary="true"></p-checkbox>
+                                </div>
+                                <div class="p-col-12">
+                                    <p-checkbox label="Exibe lancamentos pagos" [(ngModel)]="mostraPago" binary="true"></p-checkbox>
+                                </div>
+                            </div>
+
+                            <p-footer>
+                                <button pButton type="button" icon="pi pi-cog" iconPos="left" label="Gera Relatório" (click)="onGerar_Click()"></button>
+
+                            </p-footer>
+
+                        </p-panel>
+                    </div>
+
+                    <div class="p-col-12 p-md-9 p-lg-9">
+                        <p-toolbar>
+                            <div class="ui-toolbar-group-right">
+                                <button pButton type="button" label="Imprimir Relatório" icon="pi pi-print" onclick="printJS({ printable: 'relatorio', type: 'html', honorColor: true, css: ['/assets/css/print-style.css'] })"></button>
+                            </div>
+							<div class="ui-toolbar-group-right" style="margin-right:10px;">
+								<button pButton type="button" label="Exportar Excel" icon="pi pi-download pi" (click)="onExportXls_Click()"></button>
+							</div>
+
+
+                        </p-toolbar>
+
+
+
+                        <div class="content-outlet relatorio" id="relatorio" *ngIf="showReport == true">
+                            <table>
+                                <tr>
+                                    <td class="align-left">
+                                        <img src="/assets/images/common/logo-menu.png">
+                                    </td>
+                                    <td class="align-right">
+                                        <label class="relatorio-title align-right">Resumo de Lancamentos Agrupado</label>
+                                        <label class="relatorio-subtitle align-right" *ngIf="reportType != ''">
+                                            Tipo: {{ reportType }}
+                                        </label>
+                                        <label class="relatorio-subtitle align-right" *ngIf="filtro.EmissaoFilter == true">
+                                            Vencimento: {{ filtro.EmissaoMinValue | date : 'dd/MM/yyyy' }} - {{ filtro.EmissaoMaxValue | date : 'dd/MM/yyyy' }}
+                                        </label>
+                                        <label class="relatorio-subtitle align-right" *ngIf="filtro.VencimentoFilter == true">
+                                            Vencimento: {{ filtro.VencimentoMinValue | date : 'dd/MM/yyyy' }} - {{ filtro.VencimentoMaxValue | date : 'dd/MM/yyyy' }}
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="relatorio-separator"></div>
+
+							<ng-container *ngIf="resumoCusto.length > 0">
+								<table>
+									<tr>
+										<th colspan="4">Resumo dos Lançamentos</th>
+									</tr>
+									<tr>
+										<th>Categoria</th>
+										<th>Debitos</th>
+										<th>Creditos</th>
+										<th>Saldo</th>
+									</tr>
+									<tr *ngFor="let resumo of resumoCusto">
+										<td>{{ resumo.Descricao }}</td>
+										<td>{{ resumo.Debito | currency: 'BRL' }}</td>
+										<td>{{ resumo.Credito | currency: 'BRL' }}</td>
+										<td>{{ resumo.Saldo | currency: 'BRL' }}</td>
+									</tr>
+									<tr>
+										<th>{{ pegaTotalResumo().Descricao }}</th>
+										<th>{{ pegaTotalResumo().Debito | currency: 'BRL' }}</th>
+										<th>{{ pegaTotalResumo().Credito | currency: 'BRL' }}</th>
+										<th>{{ pegaTotalResumo().Saldo | currency: 'BRL' }}</th>
+									</tr>
+								</table>
+							</ng-container>
+
+							<div class="relatorio-separator"></div>
+
+                            <ng-container *ngFor="let item of vm.Items">
+                                <table *ngIf="(mostraReceber == true && item.ItemsReceber.length > 0) || (mostraRecebido == true && item.ItemsRecebido.length > 0) || (mostraPagar == true && item.ItemsPagar.length > 0) || (mostraPago == true && item.ItemsPago.length > 0)">
+                                    <tr>
+                                        <th>{{ item.Nome }}</th>
+                                    </tr>
+
+                                    <tr *ngIf="mostraReceber == true && item.ItemsReceber.length > 0">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="11">Lancamentos a Receber</th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 50px;">Tipo</th>
+                                                    <th style="width: 100px;">Coleta</th>
+                                                    <th style="width: 100px;">Vencimento</th>
+                                                    <th>Pedido</th>
+                                                    <th>Cliente</th>
+                                                    <th>Caminhão</th>
+                                                    <th>Remetente</th>
+                                                    <th>Liquido</th>
+                                                    <th>Baixado</th>
+                                                    <th>Saldo</th>
+                                                    <th style="width: 60px;"></th>
+                                                </tr>
+                                                <ng-container *ngFor="let lanc of item.ItemsReceber">
+                                                    <tr class="relatorio-item-border">
+                                                        <td class="text-align-center">
+                                                            <label class="message-blue padding-info">{{ lanc.Tipo }}</label>
+                                                        </td>
+                                                        <td class="align-left">{{ lanc.Coleta | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                                        <td>
+                                                            <div *ngIf="lanc.OrdemServico">OS: {{ lanc.OrdemServico }}</div>
+                                                            <div *ngIf="lanc.NumPedido">Num. Ped: {{ lanc.NumPedido }}</div>
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Cliente }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Motorista }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Remetente }}
+                                                        </td>
+                                                        <td>{{ lanc.Valor | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorBaixado | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorSaldo | currency:'BRL' }}</td>
+                                                        <td class="align-center">
+                                                            <a class="action-primary" (click)="onBaixa_Click(lanc)">
+                                                                <i class="pi pi-check-circle"></i>
+                                                            </a>
+                                                            <a class="action-primary" (click)="onEdita_Click(lanc)">
+                                                                <i class="pi pi-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <!--
+                                                    <tr class="relatorio-item-border">
+                                                        <td colspan="10">
+                                                            <label class="text-bold" *ngIf="lanc.">Observações</label>
+                                                            <div>
+                                                                {{ item.Observacao }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    -->
+                                                </ng-container>
+                                                <tr>
+                                                    <th colspan="11" class="text-align-right">
+                                                        Total: {{ item.TotalReceber | currency:'BRL' }}
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr *ngIf="mostraRecebido == true && item.ItemsRecebido.length > 0">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="11">Lancamentos Recebidos</th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 50px;">Tipo</th>
+                                                    <th style="width: 100px;">Coleta</th>
+                                                    <th style="width: 100px;">Vencimento</th>
+                                                    <th style="width: 100px;">Baixa</th>
+                                                    <th>Pedido</th>
+                                                    <th>Cliente</th>
+                                                    <th>Caminhão</th>
+                                                    <th>Remetente</th>
+                                                    <th>Liquido</th>
+                                                    <th>Baixado</th>
+                                                    <th style="width: 60px;"></th>
+                                                </tr>
+                                                <ng-container *ngFor="let lanc of item.ItemsRecebido">
+                                                    <tr class="relatorio-item-border">
+                                                        <td class="text-align-center">
+                                                            <label class="message-blue padding-info">{{ lanc.Tipo }}</label>
+                                                        </td>
+                                                        <td class="align-left">{{ lanc.Coleta | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Baixa | date : 'dd/MM/yyyy' }}</td>
+                                                        <td>
+                                                            <div *ngIf="lanc.OrdemServico">OS: {{ lanc.OrdemServico }}</div>
+                                                            <div *ngIf="lanc.NumPedido">Num. Ped: {{ lanc.NumPedido }}</div>
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Cliente }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Motorista }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Remetente }}
+                                                        </td>
+                                                        <td>{{ lanc.Valor | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorBaixado | currency:'BRL' }}</td>
+                                                        <td class="align-center">
+                                                            <a class="action-primary" (click)="onEdita_Click(lanc)">
+                                                                <i class="pi pi-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <!--
+                                                    <tr class="relatorio-item-border">
+                                                        <td colspan="10">
+                                                            <label class="text-bold" *ngIf="lanc.Observacao">Observações</label>
+                                                            <div>
+                                                                {{ item.Observacao }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    -->
+                                                </ng-container>
+                                                <tr>
+                                                    <th colspan="11" class="text-align-right">
+                                                        Total: {{ item.TotalRecebido | currency:'BRL' }}
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr *ngIf="mostraPagar == true && item.ItemsPagar.length > 0">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="11">Lancamentos a Pagar</th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 50px;">Tipo</th>
+                                                    <th style="width: 100px;">Coleta</th>
+                                                    <th style="width: 100px;">Vencimento</th>
+                                                    <th>Pedido</th>
+                                                    <th>Cliente</th>
+                                                    <th>Caminhão</th>
+                                                    <th>Remetente</th>
+                                                    <th>Liquido</th>
+                                                    <th>Baixado</th>
+                                                    <th>Saldo</th>
+                                                    <th style="width: 60px;"></th>
+                                                </tr>
+                                                <ng-container *ngFor="let lanc of item.ItemsPagar">
+                                                    <tr class="relatorio-item-border">
+                                                        <td class="text-align-center">
+                                                            <label class="message-red padding-info">{{ lanc.Tipo }}</label>
+                                                        </td>
+                                                        <td class="align-left">{{ lanc.Coleta | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                                        <td>
+                                                            <div *ngIf="lanc.OrdemServico">OS: {{ lanc.OrdemServico }}</div>
+                                                            <div *ngIf="lanc.NumPedido">Num. Ped: {{ lanc.NumPedido }}</div>
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Cliente }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Motorista }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Remetente }}
+                                                        </td>
+                                                        <td>{{ lanc.Valor | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorBaixado | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorSaldo | currency:'BRL' }}</td>
+                                                        <td class="align-center">
+                                                            <a class="action-primary" (click)="onBaixa_Click(lanc)">
+                                                                <i class="pi pi-check-circle"></i>
+                                                            </a>
+                                                            <a class="action-primary" (click)="onEdita_Click(lanc)">
+                                                                <i class="pi pi-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <!--
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            <label class="text-bold" *ngIf="lanc.Observacao">Observações</label>
+                                                            <div>
+                                                                {{ item.Observacao }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    -->
+                                                </ng-container>
+                                                <tr>
+                                                    <th colspan="11" class="text-align-right">
+                                                        Total: {{ item.TotalPagar | currency:'BRL' }}
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr *ngIf="mostraPago == true && item.ItemsPago.length > 0">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="11">Lancamentos Pagos</th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 50px;">Tipo</th>
+                                                    <th style="width: 100px;">Coleta</th>
+                                                    <th style="width: 100px;">Vencimento</th>
+                                                    <th style="width: 100px;">Baixa</th>
+                                                    <th>Pedido</th>
+                                                    <th>Cliente</th>
+                                                    <th>Caminhão</th>
+                                                    <th>Remetente</th>
+                                                    <th>Liquido</th>
+                                                    <th>Baixado</th>
+                                                    <th style="width: 60px;"></th>
+                                                </tr>
+                                                <ng-container *ngFor="let lanc of item.ItemsPago">
+                                                    <tr class="relatorio-item-border">
+                                                        <td class="text-align-center">
+                                                            <label class="message-red padding-info">{{ lanc.Tipo }}</label>
+                                                        </td>
+                                                        <td class="align-left">{{ lanc.Coleta | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Vencimento | date : 'dd/MM/yyyy' }}</td>
+                                                        <td class="align-left">{{ lanc.Baixa | date : 'dd/MM/yyyy' }}</td>
+                                                        <td>
+                                                            <div *ngIf="lanc.OrdemServico">OS: {{ lanc.OrdemServico }}</div>
+                                                            <div *ngIf="lanc.NumPedido">Num. Ped: {{ lanc.NumPedido }}</div>
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Cliente }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Motorista }}
+                                                        </td>
+                                                        <td>
+                                                            {{ lanc.Remetente }}
+                                                        </td>
+                                                        <td>{{ lanc.Valor | currency:'BRL' }}</td>
+                                                        <td>{{ lanc.ValorBaixado | currency:'BRL' }}</td>
+                                                        <td class="align-center">
+                                                            <a class="action-primary" (click)="onEdita_Click(lanc)">
+                                                                <i class="pi pi-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <!--
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            <label class="text-bold" *ngIf="lanc.Observacao">Observações</label>
+                                                            <div>
+                                                                {{ item.Observacao }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    -->
+                                                </ng-container>
+                                                <tr>
+                                                    <th colspan="11" class="text-align-right">
+                                                        Total: {{ item.TotalPago | currency:'BRL' }}
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

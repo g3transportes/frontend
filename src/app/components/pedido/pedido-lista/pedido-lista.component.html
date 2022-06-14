@@ -1,0 +1,154 @@
+<p-blockUI [blocked]="loading.Status">
+    <p-progressBar mode="indeterminate"></p-progressBar>
+</p-blockUI>
+
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="p-grid" *ngIf="globalService.breadcrumb !== undefined && globalService.home != undefined">
+            <div class="p-col-12">
+                <p-breadcrumb [model]="globalService.breadcrumb" [home]="globalService.home"></p-breadcrumb>
+            </div>
+        </div>
+        
+        <div class="p-grid content-outlet">
+            <div class="p-col-12">
+                <p-toolbar>
+                    <div class="ui-toolbar-group-right">
+                        <button pButton type="button" label="Adicionar Registro" icon="pi pi-plus" (click)="onAdiciona_Click()"></button>
+                    </div>
+                </p-toolbar>
+                
+                <p-table [value]="vm.Items">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 180px">Ordem de Serviço</th>
+                            <!--<th style="width: 140px">Pedido</th>-->
+                            <th style="width: 90px">Data</th>
+                            <th style="width: 90px">Coleta</th>
+                            <th>Cliente</th>
+                            <th>Remetente</th>
+                            <th>Caminhao</th>
+                            <th style="width: 90px">Qtde</th>
+                            <th style="width: 100px">Frete</th>
+                            <th style="width: 100px">Valor G3</th>
+                            <th style="width: 90px">Coletado</th>
+                            <th style="width: 90px">Entregue</th>
+                            <th style="width: 140px">Ações</th>
+                        </tr>
+                        <tr>
+                            <th class="ui-fluid form-item">
+                                <input type="text" pInputText [(ngModel)]="filtro.OrdemServicoValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            <!--
+                            <th class="ui-fluid form-item">
+                                <input type="text" pInputText [(ngModel)]="filtro.NumPedidoValue" (keyup.enter)="onFilter_Click()"> 
+                            </th>
+                            -->
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroDataEmissao" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-calendar appendTo="body" [(ngModel)]="filtroDataColeta" selectionMode="multiple" maxDateCount="2" [showIcon]="false" [locale]="localeBR" dateFormat="dd/mm/yy" showButtonBar="true" (onSelect)="onFilter_Click()" (onClearClick)="onFilter_Click()" (keyup.enter)="onFilter_Click()"></p-calendar>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="clientes" [(ngModel)]="filtro.ClienteValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="remetentes" [(ngModel)]="filtro.RemetenteValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="caminhoes" [(ngModel)]="filtro.CaminhaoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item"></th>
+                            <th class="ui-fluid form-item">
+                                <input type="number" step="0.01" pInputText [(ngModel)]="filtro.ValorFreteValue" (keyup.enter)="onFilter_Click()">
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <input type="number" step="0.01" pInputText [(ngModel)]="filtro.ValorComissaoValue" (keyup.enter)="onFilter_Click()">
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="coletado" [(ngModel)]="filtro.ColetadoValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th class="ui-fluid form-item">
+                                <p-dropdown appendTo="body" [options]="coletado" [(ngModel)]="filtro.EntregueValue" [filter]="true" (onChange)="onFilter_Click()"></p-dropdown>
+                            </th>
+                            <th>
+                                <a class="action-primary" (click)="onFilter_Click()">
+                                    <i class="pi pi-filter"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>
+                                <a (click)="onEdita_Click(item)" class="content-block" pTooltip="Editar Pedido">
+                                    {{ item.OrdemServico }}
+                                </a>
+                                <span *ngIf="item.NumPedido" class="content-block">Ped: {{ item.NumPedido }}</span>
+                                <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                                <span *ngIf="item.Boleto" class="content-block">Boleto: {{ item.Boleto }}</span>
+                            </td>
+                            <!--
+                            <td>
+                                <span *ngIf="item.NumPedido" class="content-block">Ped: {{ item.NumPedido }}</span>
+                                <span *ngIf="item.CTe" class="content-block">CTe: {{ item.CTe }}</span>
+                                <span *ngIf="item.NFe" class="content-block">NFe: {{ item.NFe }}</span>
+                            </td>
+                            -->
+                            <td>{{ item.DataCriacao | date : 'dd/MM/yyyy' }}</td>
+                            <td>{{ item.DataColeta | date : 'dd/MM/yyyy' }}</td>
+                            <td>{{ item.Cliente.RazaoSocial }}</td>
+                            <td>
+                                <ng-container *ngIf="item.Remetente != null">
+                                    {{ item.Remetente.RazaoSocial }}
+                                </ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngIf="item.Caminhao != null">
+                                    {{ item.Caminhao.Placa }} - {{ item.Caminhao.Motorista.Nome }}
+                                </ng-container>
+                            </td>
+                            <td>{{ item.Quantidade }}</td>
+                            <td>{{ item.ValorFrete | currency:'BRL' }}</td>
+                            <td>{{ item.ValorLiquido | currency:'BRL' }}</td>
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Coletado" binary="true" disabled="true"></p-checkbox>
+                            </td>
+                            <td class="text-align-center">
+                                <p-checkbox [(ngModel)]="item.Entregue" binary="true" disabled="true"></p-checkbox>
+                            </td>
+                            <td class="text-align-center">
+                                <a class="action-primary" (click)="onFinaliza_Click(item)" *ngIf="item.Coletado == false && item.Caminhao != null" pTooltip="Coletar Pedido">
+                                    <i class="pi pi-check-circle"></i>
+                                </a>
+                                <a class="action-primary" (click)="onEntrega_Click(item)" *ngIf="item.Coletado == true && item.Entregue == false" pTooltip="Entregar Pedido">
+                                    <i class="pi pi-shopping-cart"></i>
+                                </a>
+                                <a class="action-primary" (click)="onEstorna_Click(item)" *ngIf="item.Coletado == true" pTooltip="Estornar Coleta">
+                                    <i class="pi pi-undo"></i>
+                                </a>
+                                <a class="action-primary" (click)="onEdita_Click(item)" pTooltip="Alterar Pedido">
+                                    <i class="pi pi-pencil"></i>
+                                </a>
+                                <a class="action-danger" (click)="onDeleta_Click(item)" pTooltip="Excluir Pedido">
+                                    <i class="pi pi-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="12" class="text-align-center">
+                                Nenhum registro encontrado
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                
+                <p-paginator [rows]="vm.PageSize" [totalRecords]="vm.TotalItems" (onPageChange)="onPage_Change($event)" styleClass="table-paginator"></p-paginator>
+            </div>
+        </div>
+    </div>
+</div>
